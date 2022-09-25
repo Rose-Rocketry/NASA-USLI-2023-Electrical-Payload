@@ -1,1 +1,1 @@
-# NASA-USLI-2023
+# NASA-USLI-2023-Electrical-Payload
