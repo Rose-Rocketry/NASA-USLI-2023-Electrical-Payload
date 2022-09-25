@@ -14,3 +14,5 @@ Action items as of 9/25/2022:
 - Have RF transmissions dictate the microcontroller operations of when to take pictures and apply filters (to be decided by RF Payload subsystem)
 - Build antenna to send RF transmissions
 - House camera payload in chassis to be determined by Mechanical Payload Team
+
+Google Jamboard for Camera Payload: https://jamboard.google.com/d/17pDWzvR5QUZo6pmwbOdQxkDinwWt7RJfm15y4S94SMs/viewer?f=0
