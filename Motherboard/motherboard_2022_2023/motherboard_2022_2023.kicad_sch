@@ -1031,7 +1031,7 @@
     (property "Value" "Raspberry_Pi_2_3" (id 1) (at 159.4994 83.82 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "" (id 2) (at 152.4 116.84 0)
+    (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x20_P2.54mm_Vertical" (id 2) (at 152.4 116.84 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://www.raspberrypi.org/documentation/hardware/raspberrypi/schematics/rpi_SCH_3bplus_1p0_reduced.pdf" (id 3) (at 152.4 116.84 0)
@@ -1157,7 +1157,7 @@
     (property "Value" "Conn_01x02_Female" (id 1) (at 52.07 40.6401 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "" (id 2) (at 53.34 43.18 0)
+    (property "Footprint" "Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal" (id 2) (at 53.34 43.18 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 53.34 43.18 0)
@@ -1281,10 +1281,10 @@
       (reference "#PWR0105") (unit 1) (value "GND") (footprint "")
     )
     (path "/ca5c2dbe-aad1-4009-8460-d2c5eb2b32be"
-      (reference "J1") (unit 1) (value "Conn_01x02_Female") (footprint "")
+      (reference "J1") (unit 1) (value "Conn_01x02_Female") (footprint "Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal")
     )
     (path "/0903351d-a664-4c13-a4cb-34445cc34adb"
-      (reference "J2") (unit 1) (value "Raspberry_Pi_2_3") (footprint "")
+      (reference "J2") (unit 1) (value "Raspberry_Pi_2_3") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x20_P2.54mm_Vertical")
     )
     (path "/3db1bbfb-7e59-4ea7-a9ba-3e62586099e6"
       (reference "U1") (unit 1) (value "XBee_THT") (footprint "")
