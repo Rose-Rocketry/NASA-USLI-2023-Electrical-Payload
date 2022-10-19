@@ -571,8 +571,8 @@
       (property "Value" "XBee_THT" (id 1) (at -26.67 40.64 0)
         (effects (font (size 1.27 1.27)) (justify left))
       )
-      (property "Footprint" "" (id 2) (at -20.32 33.02 0)
-        (effects (font (size 1.27 1.27)) hide)
+      (property "Footprint" "custom-footprints:XBee-THT" (id 2) (at -26.67 35.56 0)
+        (effects (font (size 1.27 1.27)) (justify left) hide)
       )
       (property "Datasheet" "https://www.digi.com/resources/documentation/Digidocs/90001506/Default.htm" (id 3) (at -26.67 43.18 0)
         (effects (font (size 1.27 1.27)) (justify left) hide)
@@ -1104,7 +1104,7 @@
     (property "Value" "XBee_THT" (id 1) (at 240.7794 100.33 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "" (id 2) (at 218.44 92.71 0)
+    (property "Footprint" "custom-footprints:XBee-THT" (id 2) (at 218.44 92.71 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://www.digi.com/resources/documentation/Digidocs/90001506/Default.htm" (id 3) (at 212.09 82.55 0)
@@ -1287,7 +1287,7 @@
       (reference "J2") (unit 1) (value "Raspberry_Pi_2_3") (footprint "Connector_PinSocket_2.54mm:PinSocket_2x20_P2.54mm_Vertical")
     )
     (path "/3db1bbfb-7e59-4ea7-a9ba-3e62586099e6"
-      (reference "U1") (unit 1) (value "XBee_THT") (footprint "")
+      (reference "U1") (unit 1) (value "XBee_THT") (footprint "custom-footprints:XBee-THT")
     )
     (path "/f0ff0792-4d97-4881-9b9c-759645b25c42"
       (reference "U2") (unit 1) (value "PCA9685PW") (footprint "Package_SO:TSSOP-28_4.4x9.7mm_P0.65mm")
