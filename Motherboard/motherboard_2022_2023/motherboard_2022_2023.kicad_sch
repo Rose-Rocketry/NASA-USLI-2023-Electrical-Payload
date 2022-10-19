@@ -1551,7 +1551,7 @@
     (property "Value" "Raspberry_Pi_2_3" (id 1) (at 73.1394 58.42 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x20_P2.54mm_Vertical" (id 2) (at 66.04 91.44 0)
+    (property "Footprint" "custom-footprints:PI_Zero" (id 2) (at 66.04 91.44 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://www.raspberrypi.org/documentation/hardware/raspberrypi/schematics/rpi_SCH_3bplus_1p0_reduced.pdf" (id 3) (at 66.04 91.44 0)
@@ -2176,7 +2176,7 @@
       (reference "J1") (unit 1) (value "Conn_01x02_Female") (footprint "Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal")
     )
     (path "/0903351d-a664-4c13-a4cb-34445cc34adb"
-      (reference "J2") (unit 1) (value "Raspberry_Pi_2_3") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x20_P2.54mm_Vertical")
+      (reference "J2") (unit 1) (value "Raspberry_Pi_2_3") (footprint "custom-footprints:PI_Zero")
     )
     (path "/0e8a3700-fd0c-4a9f-8839-ef0ab0f24625"
       (reference "J3") (unit 1) (value "Conn_01x03_Male") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
