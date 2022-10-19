@@ -324,6 +324,10 @@
     [
       "e3dd2361-8a26-4d67-8fa2-04aedf170f2c",
       "On-Board-Regulation"
+    ],
+    [
+      "0dec2096-37b6-40f7-aef8-9fa50e6c5c3f",
+      "Pyro Channel Pair"
     ]
   ],
   "text_variables": {}
