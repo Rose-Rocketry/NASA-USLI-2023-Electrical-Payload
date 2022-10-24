@@ -446,7 +446,7 @@
 
   (footprint "Package_SO:TSSOP-28_4.4x9.7mm_P0.65mm" (layer "F.Cu")
     (tedit 5E476F32) (tstamp 2eb44092-a59b-4cfe-9468-ab23fef39f46)
-    (at 184.404 70.866 90)
+    (at 183.134 66.802 90)
     (descr "TSSOP, 28 Pin (JEDEC MO-153 Var AE https://www.jedec.org/document_search?search_api_views_fulltext=MO-153), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "TSSOP SO")
     (property "Sheetfile" "motherboard_2022_2023.kicad_sch")
