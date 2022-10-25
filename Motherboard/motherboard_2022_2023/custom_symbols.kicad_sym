@@ -53,11 +53,11 @@
       )
     )
   )
-  (symbol "MPU-6050" (in_bom yes) (on_board yes)
+  (symbol "MPU-6050-Breakout" (in_bom yes) (on_board yes)
     (property "Reference" "U" (id 0) (at 5.08 -6.35 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Value" "MPU-6050" (id 1) (at 6.35 8.89 0)
+    (property "Value" "MPU-6050-Breakout" (id 1) (at 6.35 8.89 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical" (id 2) (at 0 20.32 0)
@@ -72,13 +72,13 @@
     (property "ki_description" "IMU" (id 5) (at 0 0 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (symbol "MPU-6050_0_1"
+    (symbol "MPU-6050-Breakout_0_1"
       (rectangle (start -6.35 7.62) (end 6.35 -5.08)
         (stroke (width 0) (type default) (color 0 0 0 0))
         (fill (type background))
       )
     )
-    (symbol "MPU-6050_1_1"
+    (symbol "MPU-6050-Breakout_1_1"
       (pin power_in line (at 0 10.16 270) (length 2.54)
         (name "VCC" (effects (font (size 1.27 1.27))))
         (number "1" (effects (font (size 1.27 1.27))))
