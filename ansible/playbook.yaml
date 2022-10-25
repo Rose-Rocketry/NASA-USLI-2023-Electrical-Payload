@@ -1,0 +1,58 @@
+---
+# - name: System Upgrade
+#   hosts: flight_computer
+#   become: true
+#   tasks:
+#     - name: Run apt upgrade
+#       ansible.builtin.apt:
+#         update_cache: true
+#         upgrade: true
+- name: Setup Direwolf service
+  hosts: flight_computer
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install direwolf
+      ansible.builtin.apt:
+        name: direwolf
+        state: present
+    - name: Copy direwolf Config File
+      ansible.builtin.copy:
+        src: direwolf/direwolf.conf
+        dest: /etc/direwolf.conf
+        owner: root
+        mode: 0644
+    - name: Copy direwolf override File
+      ansible.builtin.copy:
+        src: direwolf/override.conf
+        dest: /etc/systemd/system/direwolf.service.d
+        owner: root
+        mode: 0644
+    - name: Enable direwolf service
+      ansible.builtin.systemd:
+        name: direwolf
+        enabled: true
+        daemon_reload: true
+        state: restarted
+- name: Setup SDR service
+  hosts: flight_computer
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install rtl-sdr
+      ansible.builtin.apt:
+        name:
+          - rtl-sdr
+          - socat
+    - name: Copy sdr Unit File
+      ansible.builtin.copy:
+        src: sdr/sdr.service
+        dest: /etc/systemd/system
+        owner: root
+        mode: 0644
+    - name: Enable sdr service
+      ansible.builtin.systemd:
+        name: sdr
+        enabled: true
+        daemon_reload: true
+        state: restarted

@@ -1,0 +1,9 @@
+[Unit]
+Description=rtl_fm and socat
+
+[Service]
+; 30 second timeout
+; 2000 maximum payload size (max supported by direwolf)
+Restart=always
+RestartSec=5
+ExecStart=socat -T10 -b2000 EXEC:"rtl_fm -f 145M" UDP4:localhost:7355
