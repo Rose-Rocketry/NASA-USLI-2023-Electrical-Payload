@@ -996,8 +996,8 @@
       (property "Value" "MPU-6050-Breakout" (id 1) (at 6.35 8.89 0)
         (effects (font (size 1.27 1.27)))
       )
-      (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical" (id 2) (at 0 20.32 0)
-        (effects (font (size 1.27 1.27)) hide)
+      (property "Footprint" "custom-footprints:MPU6050-Breakout" (id 2) (at 0 20.32 0)
+        (effects (font (size 1.27 1.27)))
       )
       (property "Datasheet" "" (id 3) (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
@@ -1503,8 +1503,8 @@
 
   (no_connect (at 210.82 68.58) (uuid 22b66892-cbb2-44a5-9ac0-9bebea996809))
   (no_connect (at 139.7 109.22) (uuid 25f7e511-a745-46f7-9ea1-20d6743ab7be))
-  (no_connect (at 139.7 114.3) (uuid 25f7e511-a745-46f7-9ea1-20d6743ab7be))
-  (no_connect (at 139.7 116.84) (uuid 25f7e511-a745-46f7-9ea1-20d6743ab7be))
+  (no_connect (at 139.7 114.3) (uuid 25f7e511-a745-46f7-9ea1-20d6743ab7bf))
+  (no_connect (at 139.7 116.84) (uuid 25f7e511-a745-46f7-9ea1-20d6743ab7c0))
   (no_connect (at 233.68 121.92) (uuid 4e63685f-4c09-42cb-8e9a-7bb9ee355424))
   (no_connect (at 233.68 119.38) (uuid 61f08a86-d4c1-4e7f-98f4-a986968001ef))
   (no_connect (at 210.82 63.5) (uuid 6716f98d-8c33-4419-9464-c80d03892f29))
@@ -2810,7 +2810,7 @@
     (property "Value" "MPU-6050-Breakout" (id 1) (at 132.8294 104.14 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical" (id 2) (at 130.81 93.98 0)
+    (property "Footprint" "custom-footprints:MPU6050-Breakout" (id 2) (at 130.81 93.98 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (id 3) (at 130.81 114.3 0)
@@ -3312,10 +3312,10 @@
       (reference "J10") (unit 1) (value "Conn_01x03_Male") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
     )
     (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/8cf5a999-745f-4d2b-bbbc-8879e2162e11"
-      (reference "J11") (unit 1) (value "Conn_01x02") (footprint "TerminalBlock:TerminalBlock_bornier-2_P5.08mm")
+      (reference "J11") (unit 1) (value "Conn_01x02") (footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-5.0-H_1x02_P5.00mm_Horizontal")
     )
     (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/e7cc480b-c63d-495c-bc3f-a86b48669aed"
-      (reference "J12") (unit 1) (value "Conn_01x02") (footprint "TerminalBlock:TerminalBlock_bornier-2_P5.08mm")
+      (reference "J12") (unit 1) (value "Conn_01x02") (footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-5.0-H_1x02_P5.00mm_Horizontal")
     )
     (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/114ef850-6681-4083-96d2-5c6ecdad19ab"
       (reference "JP1") (unit 1) (value "PYRO_A_SENSE_BYPASS") (footprint "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm")
@@ -3384,7 +3384,7 @@
       (reference "U1") (unit 1) (value "XBee_THT") (footprint "custom-footprints:XBee-THT")
     )
     (path "/ac1c7326-97eb-417d-936d-9e1c56f3a9e6"
-      (reference "U2") (unit 1) (value "MPU-6050-Breakout") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical")
+      (reference "U2") (unit 1) (value "MPU-6050-Breakout") (footprint "custom-footprints:MPU6050-Breakout")
     )
     (path "/f0ff0792-4d97-4881-9b9c-759645b25c42"
       (reference "U3") (unit 1) (value "PCA9685PW") (footprint "Package_SO:TSSOP-28_4.4x9.7mm_P0.65mm")
