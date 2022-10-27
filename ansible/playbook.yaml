@@ -22,18 +22,21 @@
         dest: /etc/direwolf.conf
         owner: root
         mode: 0644
+      register: direwolf_conf
     - name: Copy direwolf override File
       ansible.builtin.copy:
         src: direwolf/override.conf
         dest: /etc/systemd/system/direwolf.service.d
         owner: root
         mode: 0644
+        mode: 0644
+      register: direwolf_override
     - name: Enable direwolf service
       ansible.builtin.systemd:
         name: direwolf
         enabled: true
         daemon_reload: true
-        state: restarted
+        state: '{{ "restarted" if direwolf_conf.changed or direwolf_override.changed else "started" }}'
 - name: Setup SDR service
   hosts: flight_computer
   become: true
@@ -50,9 +53,21 @@
         dest: /etc/systemd/system
         owner: root
         mode: 0644
+      register: sdr_unit
     - name: Enable sdr service
       ansible.builtin.systemd:
         name: sdr
         enabled: true
         daemon_reload: true
-        state: restarted
+        state: '{{ "restarted" if sdr_unit.changed else "started" }}'
+- name: Setup GPS
+  hosts: flight_computer
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install Packages
+      ansible.builtin.apt:
+        name:
+          - i2c-tools
+          - gpsd
+
