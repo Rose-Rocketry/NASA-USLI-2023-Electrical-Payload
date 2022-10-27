@@ -92,4 +92,14 @@
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))
   )
+  (model "${KIPRJMOD}/3d_models/Raspberry_Pi_Zero_2_W.step"
+    (offset (xyz -11.5000024 0 10.7700064))
+    (scale (xyz 1 1 1))
+    (rotate (xyz -90 0 90))
+  )
+  (model "${KICAD6_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_2x20_P2.54mm_Vertical.step"
+    (offset (xyz 1.27 24.13 9.525))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 -180 0))
+  )
 )
