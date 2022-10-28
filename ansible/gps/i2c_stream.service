@@ -1,0 +1,12 @@
+[Unit]
+Description=i2c_stream
+
+[Service]
+Restart=always
+RestartSec=5
+ExecStart=socat EXEC:"i2c_stream /dev/i2c-3 42 50 1000" PTY,rawer,echo=0,link=/dev/gpsd0,group=dialout
+ExecStartPost=sleep 1
+ExecStartPost=gpsdctl add /dev/gpsd0
+
+[Install]
+WantedBy=multi-user.target

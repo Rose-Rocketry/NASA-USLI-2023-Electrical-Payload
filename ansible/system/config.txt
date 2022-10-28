@@ -80,3 +80,6 @@ arm_boost=1
 [all]
 # Enable GPIO I2C bus for clock stretching support
 dtoverlay=i2c-gpio,bus=3,i2c_gpio_sda=23,i2c_gpio_scl=24
+
+# Add pps device on GPIO 22
+dtoverlay=pps-gpio,gpiopin=22

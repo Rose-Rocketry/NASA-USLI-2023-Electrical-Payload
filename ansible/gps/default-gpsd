@@ -1,0 +1,11 @@
+# Devices gpsd should collect to at boot time.
+# They need to be read/writeable, either by user gpsd or the group dialout.
+DEVICES="/dev/gpsd0"
+
+# Other options you want to pass to gpsd
+# --nowait: query GPS immediaty
+# --badtime: Use RTC of the GPS without waiting for a fix
+GPSD_OPTIONS="--nowait --badtime"
+
+# Automatically hot add/remove USB GPS devices via gpsdctl
+USBAUTO="true"
