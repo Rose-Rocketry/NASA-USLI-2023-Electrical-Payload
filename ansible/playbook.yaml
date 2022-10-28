@@ -1,12 +1,26 @@
 ---
-# - name: System Upgrade
-#   hosts: flight_computer
-#   become: true
-#   tasks:
-#     - name: Run apt upgrade
-#       ansible.builtin.apt:
-#         update_cache: true
-#         upgrade: true
+- name: System Setup
+  hosts: flight_computer
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Copy config.txt
+      ansible.builtin.copy:
+        src: system/config.txt
+        dest: /boot/config.txt
+        owner: root
+        mode: 0755 # FAT doesn't support executable bit
+      register: config_txt
+    - name: Copy config.txt
+      ansible.builtin.copy:
+        src: system/i2c-dev.conf
+        dest: /etc/modules-load.d/i2c-dev.conf
+        owner: root
+        mode: 0644
+      register: i2c_dev_conf
+    - name: Reboot
+      ansible.builtin.reboot:
+      when: config_txt.changed or i2c_dev_conf.changed
 - name: Setup Direwolf service
   hosts: flight_computer
   become: true
@@ -28,7 +42,6 @@
         src: direwolf/override.conf
         dest: /etc/systemd/system/direwolf.service.d
         owner: root
-        mode: 0644
         mode: 0644
       register: direwolf_override
     - name: Enable direwolf service
