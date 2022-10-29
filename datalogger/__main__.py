@@ -2,7 +2,6 @@ import asyncio
 from pathlib import Path
 import shutil
 
-
 from .gps import GPSDLogger
 from .mpl import MPLLogger
 from .mpu import MPULogger

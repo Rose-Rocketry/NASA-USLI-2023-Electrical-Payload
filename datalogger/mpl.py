@@ -1,10 +1,8 @@
-from ast import While
 import asyncio
 from pathlib import Path
-from re import S
-import time
-from .logger import Logger
 from Adafruit_PureIO.smbus import SMBus
+
+from .logger import Logger
 
 # Based on code from https://github.com/adafruit/Adafruit_CircuitPython_MPL3115A2/blob/main/adafruit_mpl3115a2.py
 
@@ -108,9 +106,15 @@ class MPLLogger(Logger):
             altitude_bytes = mpl3115_bytes[1:4]
             temperature_bytes = mpl3115_bytes[4:]
 
-            altitude = int.from_bytes(altitude_bytes, "big",
-                                    signed=False) / 256
-            temperature = int.from_bytes(temperature_bytes, "big",
-                                        signed=True) / 256
+            altitude = int.from_bytes(
+                altitude_bytes,
+                "big",
+                signed=False,
+            ) / 256
+            temperature = int.from_bytes(
+                temperature_bytes,
+                "big",
+                signed=True,
+            ) / 256
 
             self.log_values(altitude, temperature)

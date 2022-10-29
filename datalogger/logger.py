@@ -1,8 +1,6 @@
+import time
 from io import TextIOWrapper
 from pathlib import Path
-from re import S
-from threading import Thread
-import time
 
 from .start_time import START_TIME
 

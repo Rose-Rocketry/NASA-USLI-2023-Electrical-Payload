@@ -1,6 +1,7 @@
 import asyncio
 import json
 from pathlib import Path
+
 from .logger import Logger
 
 
@@ -8,8 +9,10 @@ class GPSDLogger(Logger):
 
     def __init__(self, session_folder: Path) -> None:
         super().__init__(
-            session_folder, "GPSD",
-            ("time", "fix", "ept", "lat", "lon", "epx", "epy", "alt", "epv"))
+            session_folder,
+            "GPSD",
+            ("time", "fix", "ept", "lat", "lon", "epx", "epy", "alt", "epv"),
+        )
 
     async def start(self):
         reader, writer = await asyncio.open_connection("localhost", 2947)
@@ -19,7 +22,7 @@ class GPSDLogger(Logger):
         async for line in reader:
             data = json.loads(line)
 
-            if data['class'] == 'TPV':
+            if data["class"] == "TPV":
                 mode = data["mode"]
                 if mode == 1:
                     self.log_values(data["time"], data["mode"], data["ept"])
