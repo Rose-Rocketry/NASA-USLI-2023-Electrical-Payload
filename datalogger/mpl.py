@@ -58,13 +58,13 @@ _MPL3115A2_REGISTER_STARTCONVERSION = 0x12
 
 
 class MPLLogger(Logger):
-    bus = SMBus(3)
 
-    def __init__(self, session_folder: Path) -> None:
-        super().__init__(session_folder, "MPL3115", ("altitude", "temp"))
+    def __init__(self, session_folder: Path, bus: SMBus) -> None:
+        super().__init__(session_folder, "MPL3115", ("temp", "altitude"))
+
+        self.bus = bus
 
     async def start(self):
-        self.bus = SMBus(3)
         # Over sample, measure altitude
         self.ctrl_reg1 = _MPL3115A2_CTRL_REG1_OS64 | _MPL3115A2_CTRL_REG1_ALT
 
@@ -117,4 +117,4 @@ class MPLLogger(Logger):
                 signed=True,
             ) / 256
 
-            self.log_values(altitude, temperature)
+            self.log_values(temperature, altitude)

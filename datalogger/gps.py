@@ -1,4 +1,5 @@
 import asyncio
+from base64 import b64encode
 import json
 from pathlib import Path
 
@@ -21,16 +22,21 @@ class GPSDLogger(Logger):
 
         async for line in reader:
             data = json.loads(line)
+            raw = b64encode(line)
 
             if data["class"] == "TPV":
                 mode = data["mode"]
-                if mode == 1:
-                    self.log_values(data["time"], data["mode"], data["ept"])
+                print(data)
+                if mode == 1 and "time" in data:
+                    self.log_values(data["time"], data["mode"], data["ept"],
+                                    "", "", "", "", "", "", raw)
                 elif mode == 2:
                     self.log_values(data["time"], data["mode"], data["ept"],
                                     data["lat"], data["lon"], data["epx"],
-                                    data["epy"])
+                                    data["epy"], "", "", "", raw)
                 elif mode == 3:
                     self.log_values(data["time"], data["mode"], data["ept"],
                                     data["lat"], data["lon"], data["epx"],
-                                    data["epy"], data["alt"], data["epv"])
+                                    data["epy"], data["alt"], data["epv"], raw)
+                else:
+                    self.log_values("", data["mode"], "", "", "", "", "", "", "", raw)
