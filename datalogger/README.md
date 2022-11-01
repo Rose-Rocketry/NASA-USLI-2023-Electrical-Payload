@@ -1,2 +1,2 @@
 # Datalogger
-Simple data logger for subscale rocket
+Simple data logger for the subscale rocket. 
