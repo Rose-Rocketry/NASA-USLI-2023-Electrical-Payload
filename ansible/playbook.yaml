@@ -1,6 +1,6 @@
 ---
 - name: System Setup
-  hosts: flight_computer
+  hosts: all
   become: true
   gather_facts: false
   tasks:
@@ -74,7 +74,7 @@
         daemon_reload: true
         state: '{{ "restarted" if sdr_unit.changed else "started" }}'
 - name: Setup GPS
-  hosts: flight_computer
+  hosts: all
   become: true
   gather_facts: false
   tasks:
@@ -82,8 +82,8 @@
       ansible.builtin.apt:
         name:
           - i2c-tools
+          - socat
           - gpsd
-          - python3-gps
           # - chrony
           # - pps-tools # For Testing
     - name: Download i2c_stream
@@ -130,3 +130,58 @@
     #     name: chrony
     #     enabled: true
     #     state: '{{ "restarted" if chrony_conf.changed else "started" }}'
+- name: Setup Datalogger
+  hosts: subscale_computer
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install packages for datalogger
+      ansible.builtin.apt:
+        name:
+          - python3-gps
+          - virtualenv
+    - name: Create /opt
+      ansible.builtin.file:
+        path: /opt
+        state: directory
+        owner: root
+        mode: 0755
+    - name: Copy source tree
+      ansible.posix.synchronize:
+        src: datalogger/
+        dest: /opt/datalogger/
+        archive: no
+        checksum: yes
+        delete: yes
+        recursive: yes
+      register: datalogger_src
+    - name: Copy datalogger unit file
+      ansible.builtin.copy:
+        src: datalogger/datalogger.service
+        dest: /etc/systemd/system
+        owner: root
+        mode: 0644
+      register: datalogger_unit
+    - name: Setup datalogger venv
+      ansible.builtin.pip:
+        requirements: /opt/datalogger/requirements.txt
+        virtualenv: /opt/datalogger-venv
+      register: datalogger_venv
+    - name: Create /var/local
+      ansible.builtin.file:
+        path: /var/local
+        state: directory
+        owner: root
+        mode: 0755
+    - name: Create /var/local/datalogger
+      ansible.builtin.file:
+        path: /var/local/datalogger
+        state: directory
+        owner: pi
+        mode: 0755
+    - name: Enable datalogger service
+      ansible.builtin.systemd:
+        name: datalogger
+        enabled: true
+        daemon_reload: true
+        state: '{{ "restarted" if datalogger_src.changed or datalogger_unit.changed or datalogger_venv.changed else "started" }}'

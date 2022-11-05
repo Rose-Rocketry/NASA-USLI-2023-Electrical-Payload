@@ -1,0 +1,12 @@
+[Unit]
+Description=rtl_fm and socat
+
+[Service]
+User=pi
+Restart=always
+RestartSec=5
+ExecStart=/opt/datalogger-venv/bin/python -m datalogger
+WorkingDirectory=/opt
+
+[Install]
+WantedBy=multi-user.target

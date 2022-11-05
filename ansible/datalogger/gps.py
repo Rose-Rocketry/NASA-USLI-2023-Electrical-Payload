@@ -22,7 +22,7 @@ class GPSDLogger(Logger):
 
         async for line in reader:
             data = json.loads(line)
-            raw = b64encode(line)
+            raw = b64encode(line).decode()
 
             if data["class"] == "TPV":
                 mode = data["mode"]
