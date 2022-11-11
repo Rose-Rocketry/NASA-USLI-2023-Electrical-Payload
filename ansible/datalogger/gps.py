@@ -24,19 +24,7 @@ class GPSDLogger(Logger):
             data = json.loads(line)
             raw = b64encode(line).decode()
 
-            if data["class"] == "TPV":
-                mode = data["mode"]
-                print(data)
-                if mode == 1 and "time" in data:
-                    self.log_values(data["time"], data["mode"], data["ept"],
-                                    "", "", "", "", "", "", raw)
-                elif mode == 2:
-                    self.log_values(data["time"], data["mode"], data["ept"],
-                                    data["lat"], data["lon"], data["epx"],
-                                    data["epy"], "", "", "", raw)
-                elif mode == 3:
-                    self.log_values(data["time"], data["mode"], data["ept"],
-                                    data["lat"], data["lon"], data["epx"],
-                                    data["epy"], data["alt"], data["epv"], raw)
-                else:
-                    self.log_values("", data["mode"], "", "", "", "", "", "", "", raw)
+            if data.get("class") == "TPV":
+                self.log_values(data.get("time"), data.get("mode"), data.get("ept"),
+                                data.get("lat"), data.get("lon"), data.get("epx"),
+                                data.get("epy"), data.get("alt"), data.get("epv"), raw)

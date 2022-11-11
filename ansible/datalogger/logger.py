@@ -27,17 +27,17 @@ class Logger:
 
     def log_values(self, *values: any):
         now = time.monotonic() - START_TIME
-        h = now // 3600
-        m = (now // 60) % 60
-        s = now % 60
-        now_fmt = f"{int(h):02d}:{int(m):02d}:{s:07.04f}"
+        # h = now // 3600
+        # m = (now // 60) % 60
+        # s = now % 60
+        # now_fmt = f"{int(h):02d}:{int(m):02d}:{s:07.04f}"
 
         values_str = map(str, values)
         print(f"{now},", file=self.log_file, end="")
         print(",".join(values_str), file=self.log_file)
 
-        print(f"[{self.name:>8} {now_fmt}]", end=" ")
-        print(*map(fixed_str, values))
+        # print(f"[{self.name:>8} {now_fmt}]", end=" ")
+        # print(*map(fixed_str, values))
 
     async def start(self):
         raise NotImplementedError()
