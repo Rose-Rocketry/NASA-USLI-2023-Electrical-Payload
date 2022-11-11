@@ -21,6 +21,12 @@
     - name: Reboot
       ansible.builtin.reboot:
       when: config_txt.changed or i2c_dev_conf.changed
+    - name: Disable and stop packagekit
+      # Uses a lot of CPU, doesn't do anything useful
+      ansible.builtin.systemd:
+        name: packagekit
+        enabled: false
+        state: stopped
 - name: Setup Direwolf service
   hosts: flight_computer
   become: true
