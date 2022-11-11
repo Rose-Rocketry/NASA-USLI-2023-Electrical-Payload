@@ -1,7 +1,9 @@
+from datetime import datetime
+from pathlib import Path
+
 import cv2 as cv2
 import numpy as np
-from pathlib import Path
-from datetime import datetime
+
 
 def __get_image():
     cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -27,6 +29,7 @@ def __proc_distort(image):
     blended = cv2.addWeighted(image,0.5,sobel,0.5,0.0) 
     return blended
 
+### Takes a picture
 def take_picture(grayscale: bool, distort: bool, name: str):
     image, time = __get_image()
     if grayscale:
