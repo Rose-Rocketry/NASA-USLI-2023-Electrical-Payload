@@ -1,42 +1,42 @@
 - name: Install and setup XBNet
   hosts: pi
   vars:
-    GITHUB_REPO: https://github.com/Rose-Rocketry/xbnet
-  gather_facts: yes
-  become: yes
+    github_repo: https://github.com/Rose-Rocketry/xbnet
+  gather_facts: true
+  become: true
   tasks:
-  - name: Download latest binary
-    ansible.builtin.get_url:
-      url: "{{ GITHUB_REPO }}/releases/latest/download/xbnet-{{ansible_facts['machine']}}"
-      checksum: sha256:{{ GITHUB_REPO }}/releases/latest/download/xbnet-{{ansible_facts['machine']}}.sha256
-      dest: /usr/local/bin/xbnet
-      mode: 0755
-    notify: Restart XBNet
+    - name: Download latest binary
+      ansible.builtin.get_url:
+        url: "{{ github_repo }}/releases/latest/download/xbnet-{{ ansible_facts['machine'] }}"
+        checksum: sha256:{{ github_repo }}/releases/latest/download/xbnet-{{ ansible_facts['machine'] }}.sha256
+        dest: /usr/local/bin/xbnet
+        mode: 0755
+      notify: Restart XBNet
 
-  - name: Generate xb-initfile.txt
-    ansible.builtin.template:
-      src: ./xb-initfile.txt.j2
-      dest: /usr/local/etc/xb-initfile.txt
-      mode: 0644
-    notify: Restart XBNet
+    - name: Generate xb-initfile.txt
+      ansible.builtin.template:
+        src: ./xb-initfile.txt.j2
+        dest: /usr/local/etc/xb-initfile.txt
+        mode: 0644
+      notify: Restart XBNet
 
-  - name: Generate rsmb.service
-    ansible.builtin.template:
-      src: xbnet.service.j2
-      dest: /etc/systemd/system/xbnet.service
-      mode: 0644
-    register: sdr_unit
-    notify: Restart XBNet
+    - name: Generate rsmb.service
+      ansible.builtin.template:
+        src: xbnet.service.j2
+        dest: /etc/systemd/system/xbnet.service
+        mode: 0644
+      register: sdr_unit
+      notify: Restart XBNet
 
-  - name: Enable builtin service
-    ansible.builtin.systemd:
-      name: xbnet
-      enabled: true
-      state: started
+    - name: Enable builtin service
+      ansible.builtin.systemd:
+        name: xbnet
+        enabled: true
+        state: started
 
   handlers:
-  - name: Restart XBNet
-    ansible.builtin.systemd:
-      name: xbnet
-      daemon_reload: true
-      state: restarted
+    - name: Restart XBNet
+      ansible.builtin.systemd:
+        name: xbnet
+        daemon_reload: true
+        state: restarted

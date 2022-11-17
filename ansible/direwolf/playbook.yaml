@@ -28,7 +28,7 @@
         name: direwolf
         enabled: true
         state: started
-    
+
   handlers:
     - name: Restart Direwolf
       ansible.builtin.systemd:

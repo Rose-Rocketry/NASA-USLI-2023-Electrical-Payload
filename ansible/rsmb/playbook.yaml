@@ -1,41 +1,41 @@
 - name: Install and setup RSMB
   hosts: all
   vars:
-    GITHUB_REPO: https://github.com/Rose-Rocketry/mosquitto.rsmb
-  gather_facts: yes
-  become: yes
+    github_repo: https://github.com/Rose-Rocketry/mosquitto.rsmb
+  gather_facts: true
+  become: true
   tasks:
-  - name: Download latest binary
-    ansible.builtin.get_url:
-      url: "{{ GITHUB_REPO }}/releases/latest/download/rsmb-{{ansible_facts['machine']}}"
-      checksum: sha256:{{ GITHUB_REPO }}/releases/latest/download/rsmb-{{ansible_facts['machine']}}.sha256
-      dest: /usr/local/bin/rsmb
-      mode: 0755
-    notify: Restart RSMB
+    - name: Download latest binary
+      ansible.builtin.get_url:
+        url: "{{ github_repo }}/releases/latest/download/rsmb-{{ ansible_facts['machine'] }}"
+        checksum: sha256:{{ github_repo }}/releases/latest/download/rsmb-{{ ansible_facts['machine'] }}.sha256
+        dest: /usr/local/bin/rsmb
+        mode: 0755
+      notify: Restart RSMB
 
-  - name: Generate rsmb.conf
-    ansible.builtin.template:
-      src: ./rsmb.conf.j2
-      dest: /usr/local/etc/rsmb.conf
-      mode: 0644
-    notify: Restart RSMB
+    - name: Generate rsmb.conf
+      ansible.builtin.template:
+        src: ./rsmb.conf.j2
+        dest: /usr/local/etc/rsmb.conf
+        mode: 0644
+      notify: Restart RSMB
 
-  - name: Copy rsmb.service
-    ansible.builtin.copy:
-      src: rsmb.service
-      dest: /etc/systemd/system/
-      mode: 0644
-    notify: Restart RSMB
+    - name: Copy rsmb.service
+      ansible.builtin.copy:
+        src: rsmb.service
+        dest: /etc/systemd/system/
+        mode: 0644
+      notify: Restart RSMB
 
-  - name: Enable builtin service
-    ansible.builtin.systemd:
-      name: rsmb
-      enabled: true
-      state: started
+    - name: Enable builtin service
+      ansible.builtin.systemd:
+        name: rsmb
+        enabled: true
+        state: started
 
   handlers:
-  - name: Restart RSMB
-    ansible.builtin.systemd:
-      name: rsmb
-      daemon_reload: true
-      state: restarted
+    - name: Restart RSMB
+      ansible.builtin.systemd:
+        name: rsmb
+        daemon_reload: true
+        state: restarted
