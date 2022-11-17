@@ -1,0 +1,76 @@
+- name: Setup GPS
+  hosts: rocket,&pi
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install Packages
+      ansible.builtin.apt:
+        name:
+          - i2c-tools
+          - socat
+          - gpsd
+          # - chrony
+          # - pps-tools # For Testing
+
+    - name: Download i2c_stream
+      ansible.builtin.get_url:
+        url: https://github.com/Rose-Rocketry/ublox-m8-i2c-standalone/releases/download/v0.0.3/i2c_stream_armhf
+        checksum: sha256:924f54fc4b0e7b637e390f93a554a96a0420bda12d8cb1d0a57a472f469823eb
+        mode: 0755
+        dest: /usr/local/bin/i2c_stream
+      notify: Restart i2c_stream
+
+    - name: Copy i2c_stream Unit File
+      ansible.builtin.copy:
+        src: i2c_stream.service
+        dest: /etc/systemd/system
+        owner: root
+        mode: 0644
+      notify: Restart i2c_stream
+
+    - name: Enable i2c_stream service
+      ansible.builtin.systemd:
+        name: i2c_stream
+        enabled: true
+        state: started
+
+    - name: Copy gpsd variables
+      ansible.builtin.copy:
+        src: default-gpsd
+        dest: /etc/default/gpsd
+        owner: root
+        mode: 0644
+      notify: Restart gpsd
+
+    - name: Enable gpsd service
+      ansible.builtin.systemd:
+        name: gpsd
+        enabled: true
+        state: started
+
+    # - name: Copy chrony config
+    #   ansible.builtin.copy:
+    #     src: chrony.conf
+    #     dest: /etc/chrony/chrony.conf
+    #     owner: root
+    #     mode: 0644
+    #   register: chrony_conf
+
+    # - name: Enable chrony service
+    #   ansible.builtin.systemd:
+    #     name: chrony
+    #     enabled: true
+    #     state: '{{ "restarted" if chrony_conf.changed else "started" }}'
+
+  handlers:
+    - name: Restart i2c_stream
+      ansible.builtin.systemd:
+        name: i2c_stream
+        daemon_reload: true
+        state: restarted
+
+    - name: Restart gpsd
+      ansible.builtin.systemd:
+        name: gpsd
+        daemon_reload: true
+        state: restarted

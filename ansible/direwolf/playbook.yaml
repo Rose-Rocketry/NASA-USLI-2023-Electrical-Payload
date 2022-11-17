@@ -1,0 +1,37 @@
+- name: Setup Direwolf service
+  hosts: rocket,&pi
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install direwolf
+      ansible.builtin.apt:
+        name: direwolf
+
+    - name: Copy direwolf Config File
+      ansible.builtin.copy:
+        src: direwolf.conf
+        dest: /etc/direwolf.conf
+        owner: root
+        mode: 0644
+      notify: Restart Direwolf
+
+    - name: Copy direwolf override File
+      ansible.builtin.copy:
+        src: override.conf
+        dest: /etc/systemd/system/direwolf.service.d
+        owner: root
+        mode: 0644
+      notify: Restart Direwolf
+
+    - name: Enable direwolf service
+      ansible.builtin.systemd:
+        name: direwolf
+        enabled: true
+        state: started
+    
+  handlers:
+    - name: Restart Direwolf
+      ansible.builtin.systemd:
+        name: direwolf
+        daemon_reload: true
+        state: restarted

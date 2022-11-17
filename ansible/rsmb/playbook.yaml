@@ -4,7 +4,6 @@
     GITHUB_REPO: https://github.com/Rose-Rocketry/mosquitto.rsmb
   gather_facts: yes
   become: yes
-
   tasks:
   - name: Download latest binary
     ansible.builtin.get_url:

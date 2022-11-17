@@ -1,0 +1,31 @@
+- name: Setup SDR service
+  hosts: rocket,&pi
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install rtl-sdr
+      ansible.builtin.apt:
+        name:
+          - rtl-sdr
+          - socat
+
+    - name: Copy sdr Unit File
+      ansible.builtin.copy:
+        src: sdr.service
+        dest: /etc/systemd/system
+        owner: root
+        mode: 0644
+      notify: Restart SDR
+
+    - name: Enable sdr service
+      ansible.builtin.systemd:
+        name: sdr
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Restart SDR
+      ansible.builtin.systemd:
+        name: sdr
+        daemon_reload: true
+        state: restarted

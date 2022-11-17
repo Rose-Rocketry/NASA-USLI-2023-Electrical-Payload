@@ -1,5 +1,5 @@
 - name: Install and setup XBNet
-  hosts: all
+  hosts: pi
   vars:
     GITHUB_REPO: https://github.com/Rose-Rocketry/xbnet
   gather_facts: yes
