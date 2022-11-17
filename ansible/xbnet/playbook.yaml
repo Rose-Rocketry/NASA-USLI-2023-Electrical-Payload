@@ -40,3 +40,13 @@
         name: xbnet
         daemon_reload: true
         state: restarted
+
+- name: Simulate radio link on VM's
+  hosts: vagrant
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Create TC rules
+      # TODO: Measure these values more precisely
+      ansible.builtin.command: tc qdisc replace dev eth1 root netem rate 60kbit delay 50ms loss 1%
+      changed_when: true
