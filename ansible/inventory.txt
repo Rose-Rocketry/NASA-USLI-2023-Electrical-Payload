@@ -1,0 +1,2 @@
+[groundstation]
+groundstation-pi ansible_user=pi xb_ip=10.82.104.1/24

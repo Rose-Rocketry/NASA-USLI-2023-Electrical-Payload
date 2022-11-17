@@ -1,3 +1,6 @@
+# TODO:
+- [ ] Reformat existing tasks to be one playbook for each component, and then include the needed components for each device in a main playbook
+
 # Flight Computer Setup Instructions
 0. Required software: Raspberry Pi Imager, ansible
 1. Flash "Raspberry Pi OS Lite (32 bit)" to the sd card with the Raspberry Pi Imager. Change the following settings:
@@ -16,3 +19,7 @@
 4. Ensure you have ssh access with `ssh pi@rocket-pi`
 > If you have a different hostname, be sure to update ansible_hosts
 5. Setup all of the software with `ansible-playbook playbook.yaml -i ansible_hosts` or `ansible-playbook playbook.yaml -i subscale_hosts` for subscale. This can also take a very long time
+
+# IP Addresses
+Withing the xblink network, all devices will be in the `10.82.104.0/24` subnet. The groundstation will have an ip of `10.82.104.1`, and rocket(s) will have ip(s) of `10.82.104.2`, `10.82.104.3`, etc...
+> 82.104 is ASCII for `"Rh"`

@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+[Unit]
+Description=xbnet
+
+[Service]
+Restart=always
+RestartSec=5
+ExecStart=/usr/local/bin/xbnet /dev/ttyUSB0 --serial-speed 115200 --initfile /usr/local/etc/xb-initfile.txt tun --disable-ipv6 --set-up --set-ip {{ xb_ip }}
+
+[Install]
+WantedBy=multi-user.target

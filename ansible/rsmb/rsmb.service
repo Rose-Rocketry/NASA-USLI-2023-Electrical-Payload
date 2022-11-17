@@ -1,0 +1,10 @@
+[Unit]
+Description=rsmb - Really Simple Message Broker
+
+[Service]
+Restart=always
+RestartSec=5
+ExecStart=/usr/local/bin/rsmb /usr/local/etc/rsmb.conf
+
+[Install]
+WantedBy=multi-user.target
