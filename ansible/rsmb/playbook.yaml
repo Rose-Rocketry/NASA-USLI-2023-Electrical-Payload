@@ -7,8 +7,8 @@
   tasks:
     - name: Download latest binary
       ansible.builtin.get_url:
-        url: "{{ github_repo }}/releases/latest/download/rsmb-{{ ansible_facts['machine'] }}"
-        checksum: sha256:{{ github_repo }}/releases/latest/download/rsmb-{{ ansible_facts['machine'] }}.sha256
+        url: "{{ github_repo }}/releases/latest/download/rsmb-{{ ansible_facts['machine'].removesuffix('v6l') }}"
+        checksum: sha256:{{ github_repo }}/releases/latest/download/rsmb-{{ ansible_facts['machine'].removesuffix('v6l') }}.sha256
         dest: /usr/local/bin/rsmb
         mode: 0755
       notify: Restart RSMB
@@ -27,7 +27,7 @@
         mode: 0644
       notify: Restart RSMB
 
-    - name: Enable builtin service
+    - name: Enable rsmb.service
       ansible.builtin.systemd:
         name: rsmb
         enabled: true

@@ -7,8 +7,8 @@
   tasks:
     - name: Download latest binary
       ansible.builtin.get_url:
-        url: "{{ github_repo }}/releases/latest/download/xbnet-{{ ansible_facts['machine'] }}"
-        checksum: sha256:{{ github_repo }}/releases/latest/download/xbnet-{{ ansible_facts['machine'] }}.sha256
+        url: "{{ github_repo }}/releases/latest/download/xbnet-{{ ansible_facts['machine'].removesuffix('v6l') }}"
+        checksum: sha256:{{ github_repo }}/releases/latest/download/xbnet-{{ ansible_facts['machine'].removesuffix('v6l') }}.sha256
         dest: /usr/local/bin/xbnet
         mode: 0755
       notify: Restart XBNet
@@ -20,7 +20,7 @@
         mode: 0644
       notify: Restart XBNet
 
-    - name: Generate rsmb.service
+    - name: Generate xbnet.service
       ansible.builtin.template:
         src: xbnet.service.j2
         dest: /etc/systemd/system/xbnet.service
@@ -28,7 +28,7 @@
       register: sdr_unit
       notify: Restart XBNet
 
-    - name: Enable builtin service
+    - name: Enable xbnet.service
       ansible.builtin.systemd:
         name: xbnet
         enabled: true

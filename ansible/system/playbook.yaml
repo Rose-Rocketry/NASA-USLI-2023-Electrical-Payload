@@ -5,7 +5,7 @@
   tasks:
     - name: Copy config.txt
       ansible.builtin.copy:
-        src: system/config.txt
+        src: config.txt
         dest: /boot/config.txt
         owner: root
         mode: 0755 # FAT doesn't support executable bit
@@ -13,7 +13,7 @@
 
     - name: Copy modules-load.d/i2c-dev.conf
       ansible.builtin.copy:
-        src: system/i2c-dev.conf
+        src: i2c-dev.conf
         dest: /etc/modules-load.d/i2c-dev.conf
         owner: root
         mode: 0644
@@ -29,6 +29,7 @@
   gather_facts: false
   tasks:
     - name: Disable and stop packagekit
+      ignore_errors: true
       # Uses a lot of CPU, doesn't do anything useful
       ansible.builtin.systemd:
         name: packagekit
