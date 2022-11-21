@@ -581,12 +581,6 @@
     (uuid fd9b9d27-2593-400b-b64b-3f6b86638fd1)
   )
 
-  (text "NOTE: BUCK CONVERTER OUT OF DATE\nNEW PART NUMBER NEEDED."
-    (at 137.16 20.32 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid b6023269-e7be-4eff-8003-9419974faeae)
-  )
-
   (hierarchical_label "V_BAT" (shape input) (at 46.99 30.48 180)
     (effects (font (size 1.27 1.27)) (justify right))
     (uuid d19239ff-a7b5-4b9f-8e98-9e56f9a3d9a1)
