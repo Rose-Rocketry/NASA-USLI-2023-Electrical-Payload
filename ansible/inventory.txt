@@ -1,5 +1,5 @@
-groundstation-pi ansible_user=pi xb_ip=10.82.104.1/24
-rocket-pi ansible_user=pi xb_ip=10.82.104.2/24
+groundstation-pi ansible_user=pi xb_ip=10.82.104.2/24
+rocket-pi ansible_user=pi xb_ip=10.82.104.3/24
 
 [groundstation]
 groundstation-pi

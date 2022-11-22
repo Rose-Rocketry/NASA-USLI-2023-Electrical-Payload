@@ -2,10 +2,11 @@
 trace_output protocol
 listener 1883
 {% if 'groundstation' in group_names %}
-listener 10883 10.82.104.1 mqtts
+listener 10883 10.82.104.2 mqtts
 {% else %}
 connection CentralBridge
-addresses 10.82.104.1:10883
+addresses 10.82.104.2:10883
 protocol mqtts
-topic # out "rocket/{{ inventory_hostname }}" remote/
+; topic # out "rocket/{{ inventory_hostname }}" remote/
+topic # out
 {% endif %}
