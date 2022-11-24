@@ -4090,7 +4090,7 @@
   (symbol (lib_id "power:GND") (at 129.54 154.94 270) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 75904bdd-39d0-41e9-9cdf-e84cc7f83bca)
-    (property "Reference" "#PWR?" (id 0) (at 123.19 154.94 0)
+    (property "Reference" "#PWR0103" (id 0) (at 123.19 154.94 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 125.73 154.9399 90)
@@ -4409,7 +4409,7 @@
     (property "Value" "Buzzer" (id 1) (at 139.7 153.6699 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "custom-footprints:CPI-137-83T" (id 2) (at 135.255 149.86 90)
+    (property "Footprint" "custom-footprints:8RT1209P-C" (id 2) (at 135.255 149.86 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 135.255 149.86 90)
@@ -4695,6 +4695,9 @@
     (path "/40df34d8-f953-4aa6-aa3e-8912f72fcc43"
       (reference "#PWR0102") (unit 1) (value "GND") (footprint "")
     )
+    (path "/75904bdd-39d0-41e9-9cdf-e84cc7f83bca"
+      (reference "#PWR0103") (unit 1) (value "GND") (footprint "")
+    )
     (path "/538f37c9-fc28-41eb-bf19-ca246af11a7a"
       (reference "#PWR0104") (unit 1) (value "GND") (footprint "")
     )
@@ -4707,11 +4710,8 @@
     (path "/0232510a-dfef-40ca-bb63-59cf79e2bf98"
       (reference "#PWR0107") (unit 1) (value "GND") (footprint "")
     )
-    (path "/75904bdd-39d0-41e9-9cdf-e84cc7f83bca"
-      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
-    )
     (path "/dce5d536-e66b-40aa-9add-0f38dedf7b75"
-      (reference "BZ1") (unit 1) (value "Buzzer") (footprint "custom-footprints:CPI-137-83T")
+      (reference "BZ1") (unit 1) (value "Buzzer") (footprint "custom-footprints:8RT1209P-C")
     )
     (path "/e3dd2361-8a26-4d67-8fa2-04aedf170f2c/2858d813-a628-43ec-b026-ff8014913678"
       (reference "C1") (unit 1) (value "10u") (footprint "Capacitor_SMD:C_0603_1608Metric")
