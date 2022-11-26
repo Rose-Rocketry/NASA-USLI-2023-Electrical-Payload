@@ -1,6 +1,7 @@
 (footprint "XBee-THT" (version 20211014) (generator pcbnew)
   (layer "F.Cu")
   (tedit 0)
+  (attr through_hole)
   (fp_text reference "REF**" (at 11 2.175 180) (layer "F.SilkS")
     (effects (font (size 1 1) (thickness 0.15)))
     (tstamp 87877ac1-bdf1-404a-b64b-86c6d883f085)
