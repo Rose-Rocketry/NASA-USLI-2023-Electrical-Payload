@@ -1795,6 +1795,7 @@
   (no_connect (at 149.86 167.64) (uuid 9643bc1c-6284-4e01-ac47-986821c0f349))
   (no_connect (at 149.86 160.02) (uuid 9643bc1c-6284-4e01-ac47-986821c0f34a))
   (no_connect (at 199.39 115.57) (uuid 9960f48e-3ed4-4131-8f29-ddfced454683))
+  (no_connect (at 35.56 156.21) (uuid a4e9dc49-955f-4c30-a16f-ba6cd74f44fe))
   (no_connect (at 86.36 109.22) (uuid b559ae33-a605-44e8-8c34-830308ba2506))
   (no_connect (at 175.26 35.56) (uuid b6cfd8d5-69e9-4a4c-8433-3def68277ff4))
   (no_connect (at 210.82 58.42) (uuid ba2f22ea-5b2b-4622-bd5b-0a65ebc0010c))
@@ -3679,9 +3680,14 @@
   )
 
   (text "TODO: Can we safely leave\nreset, sleep, etc... floating?"
-    (at 30.48 142.24 0)
+    (at 76.2 142.24 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 93d31251-eb96-4a5a-88ba-d17befd1c66e)
+  )
+  (text "The RTS signal is not needed\nas the Pi has plenty of buffer\nand the XBee always asserts CTS\nregardless of the RTS state"
+    (at 16.51 143.51 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid bec36503-3eca-4b56-9600-0a0f36bdf6e8)
   )
   (text "TODO: Leaving these\nfloating is a bad idea" (at 214.63 111.76 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
