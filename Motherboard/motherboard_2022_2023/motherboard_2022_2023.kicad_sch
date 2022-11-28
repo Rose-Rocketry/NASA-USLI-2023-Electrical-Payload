@@ -3671,7 +3671,7 @@
     )
   )
 
-  (text "Can be used for RTC\nbackup, investigate" (at 250.19 105.41 0)
+  (text "TODO: Leaving these\nfloating is a bad idea" (at 214.63 111.76 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid df36db8e-be6a-45ac-aa8a-68921853ac2f)
   )
