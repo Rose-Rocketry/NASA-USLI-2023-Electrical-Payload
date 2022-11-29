@@ -4724,6 +4724,23 @@
     )
   )
 
+  (symbol (lib_id "Mechanical:MountingHole") (at 227.33 147.32 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid 91331a8d-f283-40c1-8ecf-377f52f072ba)
+    (property "Reference" "H5" (id 0) (at 224.79 146.0499 0)
+      (effects (font (size 1.27 1.27)) (justify right))
+    )
+    (property "Value" "MountingHole" (id 1) (at 224.79 148.5899 0)
+      (effects (font (size 1.27 1.27)) (justify right))
+    )
+    (property "Footprint" "MountingHole:MountingHole_3.2mm_M3" (id 2) (at 227.33 147.32 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 227.33 147.32 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
   (symbol (lib_id "power:GND") (at 210.82 125.73 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 9c8b1567-9e4d-45fa-833c-8ed3e658b847)
@@ -4849,6 +4866,23 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 8273879c-7b84-4c4e-bef4-158bec7b610b))
+  )
+
+  (symbol (lib_id "Mechanical:MountingHole") (at 232.41 147.32 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid bec56f43-9891-4854-b3c0-a6dddaf8436b)
+    (property "Reference" "H6" (id 0) (at 234.95 146.0499 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "MountingHole" (id 1) (at 234.95 148.5899 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "MountingHole:MountingHole_3.2mm_M3" (id 2) (at 232.41 147.32 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 232.41 147.32 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
   )
 
   (symbol (lib_id "power:+3.3V") (at 193.04 20.32 0) (unit 1)
@@ -5343,6 +5377,30 @@
     )
   )
 
+  (sheet (at 257.81 153.67) (size 20.32 5.08) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid) (color 0 0 0 0))
+    (fill (color 0 0 0 0.0000))
+    (uuid 70244b11-01d6-4c0c-a68f-613b116dd32b)
+    (property "Sheet name" "HDMI CSI Conversion1" (id 0) (at 257.81 152.9584 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheet file" "hdmi.kicad_sch" (id 1) (at 257.81 159.3346 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+  )
+
+  (sheet (at 257.81 140.97) (size 20.32 5.08) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid) (color 0 0 0 0))
+    (fill (color 0 0 0 0.0000))
+    (uuid d86603e7-9c64-46e4-a723-6cebcaa28a84)
+    (property "Sheet name" "HDMI CSI Conversion" (id 0) (at 257.81 140.2584 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheet file" "hdmi.kicad_sch" (id 1) (at 257.81 146.6346 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+  )
+
   (sheet (at 49.53 20.32) (size 21.59 7.62) (fields_autoplaced)
     (stroke (width 0.1524) (type solid) (color 0 0 0 0))
     (fill (color 0 0 0 0.0000))
@@ -5363,6 +5421,8 @@
     (path "/" (page "1"))
     (path "/e3dd2361-8a26-4d67-8fa2-04aedf170f2c" (page "2"))
     (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f" (page "3"))
+    (path "/d86603e7-9c64-46e4-a723-6cebcaa28a84" (page "4"))
+    (path "/70244b11-01d6-4c0c-a68f-613b116dd32b" (page "5"))
   )
 
   (symbol_instances
@@ -5543,6 +5603,9 @@
     (path "/0de20a23-5f91-4095-b0c8-7a89985d2f2d"
       (reference "C12") (unit 1) (value "100n") (footprint "Capacitor_SMD:C_0603_1608Metric")
     )
+    (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/f4dc855a-dccd-4c72-b63c-a6ce52f8e549"
+      (reference "D1") (unit 1) (value "3v3") (footprint "")
+    )
     (path "/1e903c2f-be4c-4c28-a5c5-9a13f4e03cde"
       (reference "H1") (unit 1) (value "MountingHole") (footprint "MountingHole:MountingHole_3.2mm_M3")
     )
@@ -5554,6 +5617,12 @@
     )
     (path "/9e996344-88d4-49bb-951f-2f1449bfc5f6"
       (reference "H4") (unit 1) (value "MountingHole") (footprint "MountingHole:MountingHole_3.2mm_M3")
+    )
+    (path "/91331a8d-f283-40c1-8ecf-377f52f072ba"
+      (reference "H5") (unit 1) (value "MountingHole") (footprint "MountingHole:MountingHole_3.2mm_M3")
+    )
+    (path "/bec56f43-9891-4854-b3c0-a6dddaf8436b"
+      (reference "H6") (unit 1) (value "MountingHole") (footprint "MountingHole:MountingHole_3.2mm_M3")
     )
     (path "/ca5c2dbe-aad1-4009-8460-d2c5eb2b32be"
       (reference "J1") (unit 1) (value "Conn_01x02_Female") (footprint "Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal")
@@ -5590,6 +5659,18 @@
     )
     (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/e7cc480b-c63d-495c-bc3f-a86b48669aed"
       (reference "J12") (unit 1) (value "Conn_01x02") (footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-5.0-H_1x02_P5.00mm_Horizontal")
+    )
+    (path "/d86603e7-9c64-46e4-a723-6cebcaa28a84/eb6c4c24-52d8-4774-90a3-4fe2841ee201"
+      (reference "J13") (unit 1) (value "Conn_01x22_Shielded") (footprint "custom-footprints:MOLEX 22 Pin FPC 54548-2271")
+    )
+    (path "/d86603e7-9c64-46e4-a723-6cebcaa28a84/67bfe331-b0fb-4434-b98d-debe431a46ba"
+      (reference "J14") (unit 1) (value "HDMI_C_1.4") (footprint "custom-footprints:WURTH_685119136923")
+    )
+    (path "/70244b11-01d6-4c0c-a68f-613b116dd32b/eb6c4c24-52d8-4774-90a3-4fe2841ee201"
+      (reference "J15") (unit 1) (value "Conn_01x22_Shielded") (footprint "custom-footprints:MOLEX 22 Pin FPC 54548-2271")
+    )
+    (path "/70244b11-01d6-4c0c-a68f-613b116dd32b/67bfe331-b0fb-4434-b98d-debe431a46ba"
+      (reference "J16") (unit 1) (value "HDMI_C_1.4") (footprint "custom-footprints:WURTH_685119136923")
     )
     (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/114ef850-6681-4083-96d2-5c6ecdad19ab"
       (reference "JP1") (unit 1) (value "PYRO_A_SENSE_BYPASS") (footprint "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm")
@@ -5634,13 +5715,13 @@
       (reference "R8") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/a0c79f21-d2f7-435d-8df3-48bf370d5bc9"
-      (reference "R9") (unit 1) (value "200k") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R9") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/1caf4b80-a97f-49a5-8c39-c7b5b9b741b7"
       (reference "R10") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/8ef7e272-c64c-4dd6-9dfd-9d3714e220fb"
-      (reference "R11") (unit 1) (value "200k") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R11") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/23a9e7ee-a86a-4c27-9a2f-00d96b6b2cd8"
       (reference "R12") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0603_1608Metric")

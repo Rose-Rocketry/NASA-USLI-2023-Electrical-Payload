@@ -120,6 +120,7 @@
       },
       "track_widths": [
         0.0,
+        0.2,
         0.25,
         1.0,
         2.0
@@ -370,6 +371,49 @@
         "via_diameter": 0.8,
         "via_drill": 0.4,
         "wire_width": 6.0
+      },
+      {
+        "bus_width": 12.0,
+        "clearance": 0.15,
+        "diff_pair_gap": 0.15,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Smol",
+        "nets": [
+          "/HDMI CSI Conversion/CAM_3V3",
+          "/HDMI CSI Conversion/CAM_GND",
+          "/HDMI CSI Conversion/CAM_SCL",
+          "/HDMI CSI Conversion/CAM_SDA",
+          "/HDMI CSI Conversion/D0+",
+          "/HDMI CSI Conversion/D0-",
+          "/HDMI CSI Conversion/D1+",
+          "/HDMI CSI Conversion/D1-",
+          "/HDMI CSI Conversion/DC+",
+          "/HDMI CSI Conversion/DC-",
+          "/HDMI CSI Conversion/GPIO0",
+          "/HDMI CSI Conversion/GPIO1",
+          "/HDMI CSI Conversion1/CAM_3V3",
+          "/HDMI CSI Conversion1/CAM_GND",
+          "/HDMI CSI Conversion1/CAM_SCL",
+          "/HDMI CSI Conversion1/CAM_SDA",
+          "/HDMI CSI Conversion1/D0+",
+          "/HDMI CSI Conversion1/D0-",
+          "/HDMI CSI Conversion1/D1+",
+          "/HDMI CSI Conversion1/D1-",
+          "/HDMI CSI Conversion1/DC+",
+          "/HDMI CSI Conversion1/DC-",
+          "/HDMI CSI Conversion1/GPIO0",
+          "/HDMI CSI Conversion1/GPIO1"
+        ],
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.2,
+        "via_diameter": 0.8,
+        "via_drill": 0.4,
+        "wire_width": 6.0
       }
     ],
     "meta": {
@@ -438,6 +482,14 @@
     [
       "0dec2096-37b6-40f7-aef8-9fa50e6c5c3f",
       "Pyro Channel Pair"
+    ],
+    [
+      "d86603e7-9c64-46e4-a723-6cebcaa28a84",
+      "HDMI CSI Conversion"
+    ],
+    [
+      "70244b11-01d6-4c0c-a68f-613b116dd32b",
+      "HDMI CSI Conversion1"
     ]
   ],
   "text_variables": {}
