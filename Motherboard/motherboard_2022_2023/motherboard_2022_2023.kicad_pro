@@ -33,9 +33,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 1.0,
-          "height": 1.7,
-          "width": 1.7
+          "drill": 0.508,
+          "height": 0.762,
+          "width": 0.762
         },
         "silk_line_width": 0.15,
         "silk_text_italic": false,
@@ -44,8 +44,8 @@
         "silk_text_thickness": 0.15,
         "silk_text_upright": false,
         "zones": {
-          "45_degree_only": false,
-          "min_clearance": 0.254
+          "45_degree_only": true,
+          "min_clearance": 0.0
         }
       },
       "diff_pair_dimensions": [
@@ -383,6 +383,18 @@
         "microvia_drill": 0.1,
         "name": "Smol",
         "nets": [
+          "/HDMI CSI Conversion (reversed)/CAM_3V3",
+          "/HDMI CSI Conversion (reversed)/CAM_GND",
+          "/HDMI CSI Conversion (reversed)/CAM_SCL",
+          "/HDMI CSI Conversion (reversed)/CAM_SDA",
+          "/HDMI CSI Conversion (reversed)/D0+",
+          "/HDMI CSI Conversion (reversed)/D0-",
+          "/HDMI CSI Conversion (reversed)/D1+",
+          "/HDMI CSI Conversion (reversed)/D1-",
+          "/HDMI CSI Conversion (reversed)/DC+",
+          "/HDMI CSI Conversion (reversed)/DC-",
+          "/HDMI CSI Conversion (reversed)/GPIO0",
+          "/HDMI CSI Conversion (reversed)/GPIO1",
           "/HDMI CSI Conversion/CAM_3V3",
           "/HDMI CSI Conversion/CAM_GND",
           "/HDMI CSI Conversion/CAM_SCL",
@@ -394,19 +406,7 @@
           "/HDMI CSI Conversion/DC+",
           "/HDMI CSI Conversion/DC-",
           "/HDMI CSI Conversion/GPIO0",
-          "/HDMI CSI Conversion/GPIO1",
-          "/HDMI CSI Conversion1/CAM_3V3",
-          "/HDMI CSI Conversion1/CAM_GND",
-          "/HDMI CSI Conversion1/CAM_SCL",
-          "/HDMI CSI Conversion1/CAM_SDA",
-          "/HDMI CSI Conversion1/D0+",
-          "/HDMI CSI Conversion1/D0-",
-          "/HDMI CSI Conversion1/D1+",
-          "/HDMI CSI Conversion1/D1-",
-          "/HDMI CSI Conversion1/DC+",
-          "/HDMI CSI Conversion1/DC-",
-          "/HDMI CSI Conversion1/GPIO0",
-          "/HDMI CSI Conversion1/GPIO1"
+          "/HDMI CSI Conversion/GPIO1"
         ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
@@ -488,8 +488,8 @@
       "HDMI CSI Conversion"
     ],
     [
-      "70244b11-01d6-4c0c-a68f-613b116dd32b",
-      "HDMI CSI Conversion1"
+      "03d26546-991a-429c-b4de-44c077c82641",
+      "HDMI CSI Conversion (reversed)"
     ]
   ],
   "text_variables": {}
