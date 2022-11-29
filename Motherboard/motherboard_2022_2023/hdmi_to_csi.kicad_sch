@@ -4,6 +4,12 @@
 
   (paper "A4")
 
+  (title_block
+    (title "HDMI to CSI Conversion (Reversed)")
+    (date "2022-11-28")
+    (rev "1.0")
+  )
+
   (lib_symbols
     (symbol "Connector:HDMI_C_1.4" (in_bom yes) (on_board yes)
       (property "Reference" "J" (id 0) (at -6.35 26.67 0)
@@ -773,7 +779,7 @@
     (property "Reference" "J16" (id 0) (at 143.51 77.4699 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "" (id 1) (at 143.51 80.0099 0)
+    (property "Value" "~" (id 1) (at 143.51 80.0099 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "" (id 2) (at 132.715 78.74 0)
@@ -804,19 +810,36 @@
     (pin "SH" (uuid 010b0cc8-780f-4270-a628-a7d2a86472ff))
   )
 
-  (symbol (lib_id "Mechanical:MountingHole") (at 97.79 35.56 0) (unit 1)
+  (symbol (lib_id "Mechanical:MountingHole") (at 107.95 38.1 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
-    (uuid bc950924-1296-4adb-a209-9b9be0edae2e)
-    (property "Reference" "H7" (id 0) (at 95.25 34.2899 0)
+    (uuid 6f88ccac-dcd9-4e98-b2bc-4b7858a309c8)
+    (property "Reference" "H1" (id 0) (at 105.41 36.8299 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "MountingHole" (id 1) (at 95.25 36.8299 0)
+    (property "Value" "MountingHole" (id 1) (at 105.41 39.3699 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Footprint" "custom-footprints:mousebite" (id 2) (at 97.79 35.56 0)
+    (property "Footprint" "MountingHole:MountingHole_2.5mm" (id 2) (at 107.95 38.1 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "~" (id 3) (at 97.79 35.56 0)
+    (property "Datasheet" "~" (id 3) (at 107.95 38.1 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol (lib_id "Mechanical:MountingHole") (at 110.49 127 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid bc950924-1296-4adb-a209-9b9be0edae2e)
+    (property "Reference" "H2" (id 0) (at 113.03 125.7299 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "MountingHole" (id 1) (at 113.03 128.2699 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "custom-footprints:mousebite" (id 2) (at 110.49 127 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 110.49 127 0)
       (effects (font (size 1.27 1.27)) hide)
     )
   )
@@ -827,7 +850,7 @@
     (property "Reference" "J15" (id 0) (at 68.58 77.4699 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "" (id 1) (at 68.58 80.0099 0)
+    (property "Value" "~" (id 1) (at 68.58 80.0099 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "" (id 2) (at 71.12 80.01 0)
@@ -859,5 +882,24 @@
     (pin "8" (uuid 21047a88-8ebf-4aa0-a1f0-4b83d2b51a9f))
     (pin "9" (uuid 93cb6ac6-7c89-4e83-806c-ed65a23d2be6))
     (pin "SH" (uuid fdc1b16c-f6d3-4156-98a3-a11eb231d885))
+  )
+
+  (sheet_instances
+    (path "/" (page "1"))
+  )
+
+  (symbol_instances
+    (path "/6f88ccac-dcd9-4e98-b2bc-4b7858a309c8"
+      (reference "H1") (unit 1) (value "MountingHole") (footprint "MountingHole:MountingHole_2.5mm")
+    )
+    (path "/bc950924-1296-4adb-a209-9b9be0edae2e"
+      (reference "H2") (unit 1) (value "MountingHole") (footprint "custom-footprints:mousebite")
+    )
+    (path "/e046bb90-a8e9-4e7f-8aa0-c8908f4f92d0"
+      (reference "J15") (unit 1) (value "~") (footprint "")
+    )
+    (path "/1cd00081-e313-451c-acb4-77e1c887fa82"
+      (reference "J16") (unit 1) (value "~") (footprint "")
+    )
   )
 )
