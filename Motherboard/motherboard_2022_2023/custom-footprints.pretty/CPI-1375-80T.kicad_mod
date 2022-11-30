@@ -23,4 +23,9 @@
   (fp_circle (center 0 0) (end 7.15 0) (layer "F.CrtYd") (width 0.05) (fill none) (tstamp ed665d65-2fb3-45f6-878a-79b7a573524b))
   (pad "1" thru_hole circle (at 3.81 0) (size 2.5 2.5) (drill 1) (layers *.Cu *.Mask) (tstamp c8115e6e-d860-4e1a-a6c8-9ce77b586118))
   (pad "2" thru_hole roundrect (at -3.81 0) (size 2.5 2.5) (drill 1) (layers *.Cu *.Mask) (roundrect_rratio 0.25) (tstamp 06b1caa5-1079-4187-a578-52be4cec82eb))
+  (model "${KIPRJMOD}/3d_models/Piezo Buzzer.step"
+    (offset (xyz 0 0 0.508))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 0 0))
+  )
 )
