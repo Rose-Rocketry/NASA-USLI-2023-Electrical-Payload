@@ -3562,10 +3562,10 @@
       (net 38 "Net-(L1-Pad1)") (pinfunction "1") (pintype "input") (tstamp 4f71beba-a5db-48cb-878f-6567810b7186))
     (pad "2" smd rect (at 2.02 0 180) (size 1.43 5.5) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 3 "+5V") (pinfunction "2") (pintype "input") (tstamp b27d8574-8850-4ce7-a9b7-8a3736f902b2))
-    (model "${KICAD6_3DMODEL_DIR}/Inductor_SMD.3dshapes/L_Coilcraft_XAL60xx_6.36x6.56mm.wrl"
+    (model "${KIPRJMOD}/3d_models/Coilcraft-XAL6030.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz -90 0 0))
     )
   )
 
