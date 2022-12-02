@@ -1,0 +1,8 @@
+[Unit]
+Description=Watches other services and delivers audio cues through a PWM buzzer.
+
+[Service]
+User=pi
+Restart=always
+RestartSec=5
+;ExecStart=
