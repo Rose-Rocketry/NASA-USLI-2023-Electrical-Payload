@@ -1,12 +1,21 @@
-; {{ ansible_managed }}
+{% if 'vagrant' in group_names and inventory_hostname in groups['vagrant'] %}
+{# Print very verbose debug output (testing only) #}
 trace_output protocol
+{% else %}
+{% endif %}
+
+{% if 'groundstation' in group_names and inventory_hostname in groups['groundstation'] %}
+{# listener 1883 127.0.0.1 #}
 listener 1883
-{% if 'groundstation' in group_names %}
 listener 10883 10.82.104.2 mqtts
 {% else %}
+listener 1883 127.0.0.1
+
+{# Forward all sensor data to the groundstation #}
 connection CentralBridge
 addresses 10.82.104.2:10883
 protocol mqtts
-; topic # out "rocket/{{ inventory_hostname }}" remote/
-topic # out
+topic # out sensors/meta/ sensors/meta/{{ inventory_hostname }}/
+topic # out sensors/data/ sensors/data/{{ inventory_hostname }}/
 {% endif %}
+

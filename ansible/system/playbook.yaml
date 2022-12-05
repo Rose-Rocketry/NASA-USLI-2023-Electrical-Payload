@@ -10,6 +10,13 @@
         owner: root
         mode: 0755 # FAT doesn't support executable bit
       notify: Reboot
+    
+    - name: Disable serial console in cmdline.txt
+      ansible.builtin.replace:
+        path: /boot/cmdline.txt
+        regexp: "console=serial0,115200 "
+        replace: ""
+      notify: Reboot
 
     - name: Copy modules-load.d/i2c-dev.conf
       ansible.builtin.copy:

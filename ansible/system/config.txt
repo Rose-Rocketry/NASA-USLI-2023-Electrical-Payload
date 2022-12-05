@@ -83,3 +83,12 @@ dtoverlay=i2c-gpio,bus=3,i2c_gpio_sda=24,i2c_gpio_scl=23
 
 # Add pps device on GPIO 22
 dtoverlay=pps-gpio,gpiopin=22
+
+# Disable bluetooth
+# This allows us to use the PL011 for the XBee instead
+dtoverlay=disable-bt
+
+# Enable UART
+enable_uart=1
+
+# TODO: Enable CTS
