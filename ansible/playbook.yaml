@@ -1,6 +1,11 @@
 - ansible.builtin.import_playbook: system/playbook.yaml
+
+# Networking
 - ansible.builtin.import_playbook: xbnet/playbook.yaml
 - ansible.builtin.import_playbook: rsmb/playbook.yaml
+
+# Sensors
 - ansible.builtin.import_playbook: sdr/playbook.yaml
 - ansible.builtin.import_playbook: direwolf/playbook.yaml
 - ansible.builtin.import_playbook: gps/playbook.yaml
+- ansible.builtin.import_playbook: sensord/playbook.yaml

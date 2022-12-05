@@ -1,0 +1,49 @@
+- name: Install and setup sensord
+  hosts: rocket #,&pi
+  vars:
+    lse_pip_url: https://github.com/Rose-Rocketry/lib_sensor_encoding/archive/v0.0.4.tar.gz
+    venv: /opt/sensord_venv
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Install pip
+      ansible.builtin.apt:
+        name:
+          - python3-pip
+          - python3-venv
+    # - name: Setup venv
+    #   ansible.builtin.pip:
+    #     virtualenv_command: python3 -m venv
+    #     virtualenv: "{{ venv }}"
+    #     name: 
+    #       - "{{ lse_pip_url }}"
+    #       - Adafruit_PureIO
+    #   notify: Restart sensord
+    - name: Copy source
+      ansible.posix.synchronize:
+        src: src/
+        dest: /opt/sensord/
+        archive: no
+        checksum: yes
+        delete: yes
+        recursive: yes
+      notify: Restart sensord
+    - name: Copy sensord.service
+      ansible.builtin.copy:
+        src: sensord.service
+        dest: /etc/systemd/system
+        owner: root
+        mode: 0644
+      notify: Restart sensord
+    - name: Enable sensord.service
+      ansible.builtin.systemd:
+        name: sensord
+        state: started
+        enabled: true
+
+  handlers:
+    - name: Restart sensord
+      ansible.builtin.systemd:
+        name: sensord
+        daemon_reload: true
+        state: restarted

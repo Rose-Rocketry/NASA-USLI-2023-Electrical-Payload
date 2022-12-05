@@ -1,0 +1,11 @@
+[Unit]
+Description=Sensor Daemon
+
+[Service]
+Restart=always
+RestartSec=5
+WorkingDirectory=/opt
+ExecStart=/opt/sensord_venv/bin/python -m sensord
+
+[Install]
+WantedBy=multi-user.target
