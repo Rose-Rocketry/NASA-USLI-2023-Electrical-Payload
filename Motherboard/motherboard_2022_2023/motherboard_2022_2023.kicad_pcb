@@ -3743,10 +3743,10 @@
       (net 2 "GND") (pinfunction "Pin_1") (pintype "passive") (tstamp 29a3cea4-6b33-46bc-93a7-f5c2d6444987))
     (pad "2" thru_hole circle (at 5 0 180) (size 3.8 3.8) (drill 2.7) (layers *.Cu *.Mask)
       (net 1 "+BATT") (pinfunction "Pin_2") (pintype "passive") (tstamp c1fb8258-6f41-40ac-b8e8-04af6152df07))
-    (model "${KICAD6_3DMODEL_DIR}/Connector_AMASS.3dshapes/AMASS_XT30U-M_1x02_P5.0mm_Vertical.wrl"
-      (offset (xyz 0 0 0))
+    (model "${KIPRJMOD}/3d_models/XT30U-M.step"
+      (offset (xyz -2.54 -2.54 12.065))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz 180 0 -90))
     )
   )
 
