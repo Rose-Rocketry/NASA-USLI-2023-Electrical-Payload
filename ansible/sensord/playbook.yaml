@@ -3,6 +3,11 @@
   vars:
     lse_pip_url: https://github.com/Rose-Rocketry/lib_sensor_encoding/archive/v0.0.4.tar.gz
     venv: /opt/sensord_venv
+    units:
+      - sensord@system.service
+      - sensord@mpu6050.service
+      - sensord@mpl3115.service
+      - sensord@gpsd.service
   gather_facts: false
   become: true
   tasks:
@@ -18,6 +23,7 @@
         name: 
           - "{{ lse_pip_url }}"
           - Adafruit_PureIO
+          - psutil
       notify: Restart sensord
     - name: Copy source
       ansible.posix.synchronize:
@@ -28,22 +34,24 @@
         delete: yes
         recursive: yes
       notify: Restart sensord
-    - name: Copy sensord.service
+    - name: Copy sensord@.service
       ansible.builtin.copy:
-        src: sensord.service
+        src: sensord@.service
         dest: /etc/systemd/system
         owner: root
         mode: 0644
       notify: Restart sensord
     - name: Enable sensord.service
       ansible.builtin.systemd:
-        name: sensord
+        name: "{{ item }}"
         state: started
         enabled: true
+      loop: "{{ units }}"
 
   handlers:
     - name: Restart sensord
       ansible.builtin.systemd:
-        name: sensord
+        name: "{{ item }}"
         daemon_reload: true
         state: restarted
+      loop: "{{ units }}"

@@ -5,7 +5,7 @@ Description=Sensor Daemon
 Restart=always
 RestartSec=5
 WorkingDirectory=/opt
-ExecStart=/opt/sensord_venv/bin/python -m sensord
+ExecStart=/opt/sensord_venv/bin/python -m sensord "%i"
 
 [Install]
 WantedBy=multi-user.target
