@@ -5481,7 +5481,7 @@
     (property "Value" "Conn_01x02_Female" (id 1) (at 39.37 22.8601 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal" (id 2) (at 40.64 25.4 0)
+    (property "Footprint" "Connector_AMASS:AMASS_XT30U-M_1x02_P5.0mm_Vertical" (id 2) (at 40.64 25.4 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 40.64 25.4 0)
@@ -6302,7 +6302,7 @@
       (reference "H4") (unit 1) (value "MountingHole") (footprint "MountingHole:MountingHole_3.2mm_M3")
     )
     (path "/ca5c2dbe-aad1-4009-8460-d2c5eb2b32be"
-      (reference "J1") (unit 1) (value "Conn_01x02_Female") (footprint "Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal")
+      (reference "J1") (unit 1) (value "Conn_01x02_Female") (footprint "Connector_AMASS:AMASS_XT30U-M_1x02_P5.0mm_Vertical")
     )
     (path "/0903351d-a664-4c13-a4cb-34445cc34adb"
       (reference "J2") (unit 1) (value "Raspberry_Pi_2_3") (footprint "custom-footprints:PI_Zero")
