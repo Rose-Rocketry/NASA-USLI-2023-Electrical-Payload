@@ -42,3 +42,5 @@ class MPL3115Sensor(PollingSensor):
     def _poll(self) -> None:
         data = self._interface.read_data()
         self._client.publish_sensor_data_raw(self._get_sensor_name(), data)
+
+SENSOR_CLASS = MPL3115Sensor

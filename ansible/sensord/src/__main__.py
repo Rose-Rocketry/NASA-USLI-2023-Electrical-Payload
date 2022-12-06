@@ -1,48 +1,36 @@
 from lib_sensor_encoding import MQTTSensorClient
 from threading import Thread
 from time import sleep
+from importlib import import_module
 import logging
 import sys
 
 from .sensors.sensor import Sensor
-from .sensors.cpu_temperature import CPUTemperatureSensor
-from .sensors.mpu6050 import MPU6050Sensor
-from .sensors.mpl3115 import MPL3115Sensor
 
 
 def main():
     logging.basicConfig(level=logging.INFO)
 
+    if len(sys.argv) != 2:
+        raise ValueError("Must provide exactly one parameter")
+
+    sensor_package_name = sys.argv[1]
+
     logger = logging.getLogger("main")
     client = MQTTSensorClient()
 
     logger.info("Starting MQTT Client")
-    client_thread = Thread(name="MQTT Client",
-                           target=client.run_foreground,
-                           daemon=True)
-    client_thread.start()
+    client.run_background()
 
-    logger.info("Creating Sensors")
-    sensors: list[Sensor] = [
-        CPUTemperatureSensor(client),
-        MPU6050Sensor(client),
-        MPL3115Sensor(client),
-    ]
+    logger.info("Creating Sensor")
 
-    threads = [
-        *map(lambda sensor: sensor.start(), sensors),
-        client_thread,
-    ]
+    SensorClass = import_module(".sensors." + sensor_package_name, __package__).SENSOR_CLASS
 
-    logger.info("Monitoring Threads")
+    sensor: Sensor = SensorClass(client)
+    sensor.start()
 
-    while True:
-        for thread in threads:
-            if not thread.is_alive():
-                logger.error(f"Thread {repr(thread.name)} exited unexpectedly")
-                sys.exit(1)
-
-        sleep(5)
+    logger.error("sensor exited unexpectedly")
+    sys.exit(1)
 
 
 if __name__ == "__main__":
