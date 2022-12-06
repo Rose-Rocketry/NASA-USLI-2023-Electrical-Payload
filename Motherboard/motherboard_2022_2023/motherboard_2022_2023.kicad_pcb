@@ -5,6 +5,14 @@
   )
 
   (paper "A4")
+  (title_block
+    (title "USLI Payload Motherboard")
+    (date "2022-12-06")
+    (rev "1.1")
+    (company "Rose-Hulman Institute of Technology")
+    (comment 1 "Contributors: Evelyn Gordon & Jake Armstrong")
+  )
+
   (layers
     (0 "F.Cu" signal)
     (31 "B.Cu" signal)
