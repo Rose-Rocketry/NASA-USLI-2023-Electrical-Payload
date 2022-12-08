@@ -14,8 +14,8 @@
 
     - name: Download i2c_stream
       ansible.builtin.get_url:
-        url: https://github.com/Rose-Rocketry/ublox-m8-i2c-standalone/releases/download/v0.0.3/i2c_stream_armhf
-        checksum: sha256:924f54fc4b0e7b637e390f93a554a96a0420bda12d8cb1d0a57a472f469823eb
+        url: https://github.com/Rose-Rocketry/ublox-m8-i2c-standalone/releases/download/v0.0.3/i2c_stream_aarch64
+        checksum: sha256:23923a54e7bd6d4bc3ac7a95c0a9c31115860959e1476d4b62303d89bcd3df11
         mode: 0755
         dest: /usr/local/bin/i2c_stream
       notify: Restart i2c_stream
