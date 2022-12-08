@@ -1,13 +1,14 @@
 - name: Install and setup sensord
   hosts: rocket,&pi
   vars:
-    lse_pip_url: https://github.com/Rose-Rocketry/lib_sensor_encoding/archive/v0.0.4.tar.gz
+    lse_pip_url: https://github.com/Rose-Rocketry/lib_sensor_encoding/archive/v0.0.5.tar.gz
     venv: /opt/sensord_venv
     units:
-      - sensord@system.service
-      - sensord@mpu6050.service
-      - sensord@mpl3115.service
-      - sensord@gpsd.service
+      - sensor-reader@system.service
+      - sensor-reader@mpu6050.service
+      - sensor-reader@mpl3115.service
+      - sensor-reader@gpsd.service
+      - sensor-logger.service
   gather_facts: false
   become: true
   tasks:
@@ -24,7 +25,7 @@
           - "{{ lse_pip_url }}"
           - Adafruit_PureIO
           - psutil
-      notify: Restart sensord
+      notify: Restart services
     - name: Copy source
       ansible.posix.synchronize:
         src: src/
@@ -33,15 +34,24 @@
         checksum: yes
         delete: yes
         recursive: yes
-      notify: Restart sensord
-    - name: Copy sensord@.service
+      notify: Restart services 
+
+    - name: Copy sensor-reader@.service
       ansible.builtin.copy:
-        src: sensord@.service
+        src: sensor-reader@.service
         dest: /etc/systemd/system
         owner: root
         mode: 0644
-      notify: Restart sensord
-    - name: Enable sensord.service
+      notify: Restart services
+    - name: Copy sensor-logger.service
+      ansible.builtin.copy:
+        src: sensor-logger.service
+        dest: /etc/systemd/system
+        owner: root
+        mode: 0644
+      notify: Restart services
+
+    - name: Enable services
       ansible.builtin.systemd:
         name: "{{ item }}"
         state: started
@@ -49,7 +59,7 @@
       loop: "{{ units }}"
 
   handlers:
-    - name: Restart sensord
+    - name: Restart services
       ansible.builtin.systemd:
         name: "{{ item }}"
         daemon_reload: true

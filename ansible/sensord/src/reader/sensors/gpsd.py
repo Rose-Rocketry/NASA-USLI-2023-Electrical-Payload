@@ -61,22 +61,27 @@ class GPSDSensor(Sensor):
         raise RuntimeError("async loop exited unexpectedly")
 
     async def _async_run(self):
-        reader, writer = await asyncio.open_unix_connection("/run/gpsd.sock")
+        reader, writer = await asyncio.open_connection("localhost", 2947)
 
         writer.write(b'?WATCH={"enable":true,"json":true}\n')
-        data: dict = json.loads(line)
-        data.get("time", "")
 
         async for line in reader:
             data = json.loads(line)
 
             mode = data.get("mode", -1)
             time = data.get("time", "1970-01-01T00:00:00.000Z")
-            time = datetime.strptime(time, "%Y-%m-%dT%H:%M:%S.%fZ")
+            time = datetime.strptime(time, "%Y-%m-%dT%H:%M:%S.%f%z")
             lat = data.get("lat", 0)
             lon = data.get("lon", 0)
             alt = data.get("alt", 0)
 
-            self._publish(fix_mode=mode, gps_timestamp=time, latitude=lat, longitude=lon, altitude=alt)
+            print(f"Time: {time}")
+
+            self._publish(fix_mode=mode,
+                          gps_timestamp=time,
+                          latitude=lat,
+                          longitude=lon,
+                          altitude=alt)
+
 
 SENSOR_CLASS = GPSDSensor
