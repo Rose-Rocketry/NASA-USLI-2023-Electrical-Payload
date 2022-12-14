@@ -365,7 +365,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "hdmi_to_csi.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
