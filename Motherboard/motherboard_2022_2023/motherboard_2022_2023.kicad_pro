@@ -415,7 +415,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "../../../../../Downloads/motherboard.step",
+      "step": "3d_models/motherboard.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
