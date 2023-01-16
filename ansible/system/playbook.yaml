@@ -18,10 +18,10 @@
         replace: ""
       notify: Reboot
 
-    - name: Copy modules-load.d/i2c-dev.conf
+    - name: Copy modules-load.d/motherboard.conf
       ansible.builtin.copy:
-        src: i2c-dev.conf
-        dest: /etc/modules-load.d/i2c-dev.conf
+        src: motherboard.conf
+        dest: /etc/modules-load.d/motherboard.conf
         owner: root
         mode: 0644
       notify: Reboot
