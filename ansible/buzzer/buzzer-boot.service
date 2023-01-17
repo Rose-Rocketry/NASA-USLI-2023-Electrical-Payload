@@ -1,0 +1,13 @@
+[Unit]
+Description=Play boot and shutdown tone
+
+[Service]
+User=pi
+Type=oneshot
+WorkingDirectory=/opt
+ExecStart=python -m buzzer boot
+ExecStop=python -m buzzer shutdown
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

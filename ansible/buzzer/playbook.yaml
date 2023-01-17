@@ -1,0 +1,62 @@
+- name: Install and setup buzzer services
+  hosts: rocket,&pi
+  gather_facts: false
+  become: true
+  tasks:
+    # - name: Install pip
+    #   ansible.builtin.apt:
+    #     name:
+    #       - python3-pip
+    #       - python3-venv
+    # - name: Setup venv
+    #   ansible.builtin.pip:
+    #     virtualenv_command: python3 -m venv
+    #     virtualenv: "{{ venv }}"
+    #     name: 
+    #       - "{{ lse_pip_url }}"
+    #       - Adafruit_PureIO
+    #       - psutil
+    #   notify: Restart services
+    - name: Copy source
+      ansible.posix.synchronize:
+        src: src/
+        dest: /opt/buzzer/
+        archive: no
+        checksum: yes
+        delete: yes
+        recursive: yes
+      notify: Restart services 
+
+    - name: Copy buzzer-boot.service
+      ansible.builtin.copy:
+        src: buzzer-boot.service
+        dest: /etc/systemd/system
+        owner: root
+        mode: 0644
+
+    # - name: Copy buzzer.service
+    #   ansible.builtin.copy:
+    #     src: buzzer.service
+    #     dest: /etc/systemd/system
+    #     owner: root
+    #     mode: 0644
+    #   notify: Restart services
+
+    # - name: Enable services
+    #   ansible.builtin.systemd:
+    #     name: buzzer
+    #     state: started
+    #     enabled: true
+
+    - name: Enable services
+      ansible.builtin.systemd:
+        name: buzzer-boot
+        daemon_reload: true
+        enabled: true
+
+  handlers:
+    - name: Restart services
+      ansible.builtin.systemd:
+        name: buzzer
+        daemon_reload: true
+        state: restarted
