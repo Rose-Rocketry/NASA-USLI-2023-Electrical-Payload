@@ -4902,7 +4902,7 @@
   (gr_line (start 75.589562 88.531695) (end 75.589562 79.641695) (layer "Edge.Cuts") (width 0.1) (tstamp 89fad989-8af7-40fc-a99b-b1a4c6bd5ef5))
   (gr_line (start 215.289562 79.641695) (end 215.289562 122.821695) (layer "Edge.Cuts") (width 0.1) (tstamp b1fb6aa1-30ee-428b-ac91-4bb746fa15cf))
   (gr_arc locked (start 79.399562 126.631695) (mid 76.705485 125.515772) (end 75.589562 122.821695) (layer "Edge.Cuts") (width 0.1) (tstamp b62ed988-47aa-4806-ab91-d7241873035c))
-  (gr_text "Raspberry Pi Motherboard\nV1.1" (at 145.947562 104.279695) (layer "B.SilkS") (tstamp 75ced224-a98f-4cef-a0d9-248dc443d21f)
+  (gr_text "Raspberry Pi Motherboard\nJLCJLCJLCJLC V1.1" (at 145.947562 104.279695) (layer "B.SilkS") (tstamp 75ced224-a98f-4cef-a0d9-248dc443d21f)
     (effects (font (size 1 1) (thickness 0.15)) (justify right mirror))
   )
   (gr_text "Architects:\nEvelyn Gordon\nJake Armstrong\nMade on Earth by Humans" (at 145.693562 109.105695) (layer "B.SilkS") (tstamp c1a3e1d3-23ff-417b-a43b-71f50c8a8619)
