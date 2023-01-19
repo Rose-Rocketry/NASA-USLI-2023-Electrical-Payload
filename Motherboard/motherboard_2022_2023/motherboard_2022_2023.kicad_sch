@@ -6331,11 +6331,8 @@
     (path "/9a5fe46d-0d35-4a94-8737-099d8afc43c5"
       (reference "J4") (unit 1) (value "STEMMA QT") (footprint "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal")
     )
-    (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/8cf5a999-745f-4d2b-bbbc-8879e2162e11"
-      (reference "J11") (unit 1) (value "Conn_01x02") (footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-5.0-H_1x02_P5.00mm_Horizontal")
-    )
-    (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/e7cc480b-c63d-495c-bc3f-a86b48669aed"
-      (reference "J12") (unit 1) (value "Conn_01x02") (footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-5.0-H_1x02_P5.00mm_Horizontal")
+    (path "/0dec2096-37b6-40f7-aef8-9fa50e6c5c3f/1c7cc827-256e-4725-9475-a54d54b26ef4"
+      (reference "J5") (unit 1) (value "Screw_Terminal_01x04") (footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MPT-0,5-4-2.54_1x04_P2.54mm_Horizontal")
     )
     (path "/d86603e7-9c64-46e4-a723-6cebcaa28a84/eb6c4c24-52d8-4774-90a3-4fe2841ee201"
       (reference "J13") (unit 1) (value "Conn_01x22_Shielded") (footprint "custom-footprints:MOLEX 22 Pin FPC 54548-2271")
