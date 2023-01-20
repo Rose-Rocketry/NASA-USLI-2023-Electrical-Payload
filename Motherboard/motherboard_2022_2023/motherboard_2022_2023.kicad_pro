@@ -465,7 +465,7 @@
     ],
     [
       "e3dd2361-8a26-4d67-8fa2-04aedf170f2c",
-      "On-Board-Regulation"
+      "Power Supply"
     ],
     [
       "0dec2096-37b6-40f7-aef8-9fa50e6c5c3f",
@@ -474,6 +474,10 @@
     [
       "d86603e7-9c64-46e4-a723-6cebcaa28a84",
       "HDMI CSI Conversion"
+    ],
+    [
+      "2798b50a-5600-4729-968e-481653ecab3d",
+      "Sensors (I2C and SPI)"
     ]
   ],
   "text_variables": {}
