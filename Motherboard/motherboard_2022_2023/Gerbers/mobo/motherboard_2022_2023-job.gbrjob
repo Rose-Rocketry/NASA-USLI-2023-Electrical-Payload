@@ -3,18 +3,18 @@
     "GenerationSoftware": {
       "Vendor": "KiCad",
       "Application": "Pcbnew",
-      "Version": "(6.0.0)"
+      "Version": "6.0.9"
     },
-    "CreationDate": "2022-11-29T18:54:42-05:00"
+    "CreationDate": "2023-01-21T02:33:53-05:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
       "Name": "motherboard_2022_2023",
       "GUID": "6d6f7468-6572-4626-9f61-72645f323032",
-      "Revision": "rev?"
+      "Revision": "1.1"
     },
     "Size": {
-      "X": 139.8,
+      "X": 109.32,
       "Y": 50.9
     },
     "LayerNumber": 2,
@@ -24,8 +24,8 @@
   "DesignRules": [
     {
       "Layers": "Outer",
-      "PadToPad": 0.0,
-      "PadToTrack": 0.0,
+      "PadToPad": 0.15,
+      "PadToTrack": 0.15,
       "TrackToTrack": 0.15,
       "MinLineWidth": 0.2,
       "TrackToRegion": 0.2,
