@@ -2125,7 +2125,7 @@
     (uuid e698ffe5-daa2-4446-bec9-be668edc6e09)
     (property "Reference" "SW1" (id 0) (at 72.39 36.83 0))
     (property "Value" "SW_Push" (id 1) (at 72.39 39.37 0))
-    (property "Footprint" "Button_Switch_THT:SW_PUSH_6mm" (id 2) (at 72.39 29.21 0)
+    (property "Footprint" "custom-footprints:SW_PUSH_6mm_2pin" (id 2) (at 72.39 29.21 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 72.39 29.21 0)

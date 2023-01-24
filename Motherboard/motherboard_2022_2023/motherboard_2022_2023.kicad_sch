@@ -5827,7 +5827,7 @@
       (reference "S9") (unit 1) (value "Servo Port") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Horizontal")
     )
     (path "/e3dd2361-8a26-4d67-8fa2-04aedf170f2c/e698ffe5-daa2-4446-bec9-be668edc6e09"
-      (reference "SW1") (unit 1) (value "SW_Push") (footprint "Button_Switch_THT:SW_PUSH_6mm")
+      (reference "SW1") (unit 1) (value "SW_Push") (footprint "custom-footprints:SW_PUSH_6mm_2pin")
     )
     (path "/3db1bbfb-7e59-4ea7-a9ba-3e62586099e6"
       (reference "U1") (unit 1) (value "XBee_THT") (footprint "custom-footprints:XBee-THT")
