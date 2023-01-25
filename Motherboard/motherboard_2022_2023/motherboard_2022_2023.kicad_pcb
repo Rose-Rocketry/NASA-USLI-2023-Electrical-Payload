@@ -7,8 +7,8 @@
   (paper "A4")
   (title_block
     (title "USLI Payload Motherboard")
-    (date "2022-12-06")
-    (rev "1.1")
+    (date "2023-01-24")
+    (rev "2")
     (company "Rose-Hulman Institute of Technology")
     (comment 1 "Contributors: Evelyn Gordon & Jake Armstrong")
   )
