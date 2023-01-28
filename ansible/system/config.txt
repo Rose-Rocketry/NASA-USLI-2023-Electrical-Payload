@@ -78,6 +78,9 @@ otg_mode=1
 arm_boost=1
 
 [all]
+# Enable GPIO shutdown
+dtoverlay=gpio-shutdown:gpio_pin=4,debounce=5000
+
 # Enable GPIO I2C bus for clock stretching support
 #dtoverlay=i2c-gpio,bus=3,i2c_gpio_sda=2,i2c_gpio_scl=3
 dtparam=i2c_arm=on
