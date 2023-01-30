@@ -15,7 +15,7 @@ listener 1883
 connection CentralBridge
 addresses 10.82.104.2:10883
 protocol mqtts
-topic # out sensors/meta/ sensors/meta/{{ inventory_hostname }}/
-topic # out sensors/data/ sensors/data/{{ inventory_hostname }}/
+topic # out sensors/meta/ sensors/meta/
+topic # out sensors/data/ sensors/data/
 {% endif %}
 
