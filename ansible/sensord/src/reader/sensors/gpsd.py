@@ -7,7 +7,7 @@ import json
 
 class GPSDSensor(Sensor):
 
-    def _get_sensor_name(self) -> str:
+    def _get_sensor_id(self) -> str:
         return "gpsd"
 
     def _get_sensor_metadata(self) -> SensorMeta:

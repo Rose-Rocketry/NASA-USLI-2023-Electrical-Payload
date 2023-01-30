@@ -2,15 +2,15 @@ from .sensor import PollingSensor
 from lib_sensor_encoding import SensorMeta, EncodingType, TimestampReading
 
 class MCP3004Sensor(PollingSensor):
+    # Calculated experientially, regression on y = k*x
     LSB_VALUE = 1/27.6982857142857
 
-    def _get_sensor_name(self) -> str:
+    def _get_sensor_id(self) -> str:
         return "battery"
 
     def _get_sensor_metadata(self) -> SensorMeta:
         return {
-            "name":
-            "MPL3115",
+            "name": "battery",
             "readings": [
                 TimestampReading,
                 {
@@ -36,6 +36,6 @@ class MCP3004Sensor(PollingSensor):
         self._fd.seek(0)
         data = int(self._fd.read())
 
-        self._client.publish_sensor_data_raw(self._get_sensor_name(), data.to_bytes(2, 'big'))
+        self._client.publish_sensor_data_raw(self._get_sensor_id(), data.to_bytes(2, 'big'))
 
 SENSOR_CLASS = MCP3004Sensor

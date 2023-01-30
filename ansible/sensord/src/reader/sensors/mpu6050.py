@@ -10,7 +10,7 @@ class MPU6050Sensor(PollingSensor):
     _BANDWIDTH = Bandwidth.BAND_5_HZ # Apply a ~5Hz lowpass filter within the sensor
     _RATE = Rate.CYCLE_5_HZ # Generate new data at a rate of 5Hz (also used as the update rate)
 
-    def _get_sensor_name(self) -> str:
+    def _get_sensor_id(self) -> str:
         return "mpu6050"
 
     def _get_sensor_metadata(self) -> SensorMeta:
@@ -63,6 +63,6 @@ class MPU6050Sensor(PollingSensor):
 
     def _poll(self) -> None:
         data = self._interface.read_data()
-        self._client.publish_sensor_data_raw(self._get_sensor_name(), data)
+        self._client.publish_sensor_data_raw(self._get_sensor_id(), data)
 
 SENSOR_CLASS = MPU6050Sensor

@@ -1,63 +1,63 @@
 from .sensor import PollingSensor
-from lib_sensor_encoding import SensorMeta, EncodingType, TimestampReading
 from pathlib import Path
 import psutil
 
 
 CPU_TEMP_PATH = Path("/sys/class/thermal/thermal_zone0/temp")
 
-class SystemSensor(PollingSensor):
 
-    def _get_sensor_name(self) -> str:
+class SystemSensor(PollingSensor):
+    def _get_sensor_id(self) -> str:
         return "system"
 
-    def _get_sensor_metadata(self) -> SensorMeta:
+    def _get_sensor_metadata(self):
         return {
-            "name":
-            "System Status",
-            "readings": [
-                TimestampReading,
+            "name": "System Status",
+            "channels": [
+                {"name": "timestamp", "type": "timestamp"},
                 {
-                    "name": "cpu_temperature",
+                    "name": "CPU Temperature",
+                    "type": "number",
                     "unit": "°C",
-                    "encoding": EncodingType.bits_integer_scaled,
-                    "bits": 16,
-                    "lsb_value": 0.01,
+                    "scale": 10,
                 },
                 {
-                    "name": "cpu_usage",
+                    "name": "CPU Usage",
+                    "type": "number",
                     "unit": "%",
-                    "encoding": EncodingType.bits_integer_scaled,
-                    "bits": 16,
-                    "lsb_value": 0.01,
+                    "scale": 100,
+                    "minimum": 0,
+                    "maximum": 100,
                 },
                 {
-                    "name": "cpu_frequency",
+                    "name": "CPU Frequency",
+                    "type": "number",
                     "unit": "MHz",
-                    "encoding": EncodingType.bits_integer_scaled,
-                    "bits": 16,
-                    "lsb_value": 0.1,
+                    "scale": 1,
                 },
                 {
-                    "name": "memory_usage",
+                    "name": "Memory Usage",
+                    "type": "number",
                     "unit": "%",
-                    "encoding": EncodingType.bits_integer_scaled,
-                    "bits": 16,
-                    "lsb_value": 0.1,
+                    "scale": 10,
+                    "minimum": 0,
+                    "maximum": 100,
                 },
                 {
-                    "name": "swap_usage",
+                    "name": "Swap Usage",
+                    "type": "number",
                     "unit": "%",
-                    "encoding": EncodingType.bits_integer_scaled,
-                    "bits": 16,
-                    "lsb_value": 0.1,
+                    "scale": 10,
+                    "minimum": 0,
+                    "maximum": 100,
                 },
                 {
-                    "name": "disk_usage",
+                    "name": "Disk Usage",
+                    "type": "number",
                     "unit": "%",
-                    "encoding": EncodingType.bits_integer_scaled,
-                    "bits": 16,
-                    "lsb_value": 0.1,
+                    "scale": 10,
+                    "minimum": 0,
+                    "maximum": 100,
                 },
             ],
         }
@@ -66,7 +66,7 @@ class SystemSensor(PollingSensor):
         return 0.5
 
     def _poll(self) -> None:
-        cpu_temperature = 0
+        cpu_temperature = None
 
         if CPU_TEMP_PATH.exists():
             with open(CPU_TEMP_PATH, "rt") as file:
@@ -78,13 +78,16 @@ class SystemSensor(PollingSensor):
         swap_usage = psutil.swap_memory().percent
         disk_usage = psutil.disk_usage("/").percent
 
-        self._publish(
-            cpu_temperature=cpu_temperature,
-            cpu_usage=cpu_usage,
-            cpu_frequency=cpu_frequency,
-            memory_usage=memory_usage,
-            swap_usage=swap_usage,
-            disk_usage=disk_usage,
+        self.publish(
+            (
+                cpu_temperature,
+                cpu_usage,
+                cpu_frequency,
+                memory_usage,
+                swap_usage,
+                disk_usage,
+            ),
+            prepend_timestamp=True,
         )
 
 

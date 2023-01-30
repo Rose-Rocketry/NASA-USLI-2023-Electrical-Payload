@@ -3,7 +3,7 @@ from lib_sensor_encoding import SensorMeta, EncodingType, TimestampReading
 from .mpl3115_interface import MPL3115Interface
 
 class MPL3115Sensor(PollingSensor):
-    def _get_sensor_name(self) -> str:
+    def _get_sensor_id(self) -> str:
         return "mpl3115"
 
     def _get_sensor_metadata(self) -> SensorMeta:
@@ -41,6 +41,6 @@ class MPL3115Sensor(PollingSensor):
 
     def _poll(self) -> None:
         data = self._interface.read_data()
-        self._client.publish_sensor_data_raw(self._get_sensor_name(), data)
+        self._client.publish_sensor_data_raw(self._get_sensor_id(), data)
 
 SENSOR_CLASS = MPL3115Sensor

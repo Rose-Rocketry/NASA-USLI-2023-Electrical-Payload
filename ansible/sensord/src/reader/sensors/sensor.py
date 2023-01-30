@@ -1,35 +1,41 @@
-from lib_sensor_encoding import MQTTSensorClient, SensorMeta
 from threading import Thread
 from typing import Callable
 from abc import ABC, abstractmethod
-import time
+from lib_sensor_encoding import MQTTSensorClient
 import logging
+import time
+import msgpack
+import threading
 
+META_TRANSMIT_INTERVAL = 15
 
 class Sensor(ABC):
-    _client: MQTTSensorClient
-    _publish: Callable
-
     def __init__(self, client: MQTTSensorClient) -> None:
         self._client = client
-        self._logger = logging.getLogger(f"sensor.{self._get_sensor_name()}")
+        self._logger = logging.getLogger(f"sensor.{self._get_sensor_id()}")
 
     @abstractmethod
-    def _get_sensor_metadata(self) -> SensorMeta:
+    def _get_sensor_metadata(self):
         pass
 
     @abstractmethod
-    def _get_sensor_name(self) -> str:
+    def _get_sensor_id(self) -> str:
         pass
 
     @abstractmethod
     def _run(self) -> None:
         pass
 
-    def start(self) -> Thread:
-        self._publish = self._client.create_sensor(self._get_sensor_name(),
-                                                   self._get_sensor_metadata())
+    def _send_meta_thread(self):
+        meta = msgpack.packb(self._get_sensor_metadata)
+        while True:
+            self._client
 
+    def publish(self, data, **kwargs):
+        self._client.publish_sensor_data(self._get_sensor_id(), data, **kwargs)
+
+    def start(self) -> Thread:
+        self._client.create_sensor(self._get_sensor_id(), self._get_sensor_metadata())
         self._run()
 
 
