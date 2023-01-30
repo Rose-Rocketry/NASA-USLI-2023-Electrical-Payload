@@ -5441,7 +5441,7 @@
   (gr_text "Architects:\nEvelyn Gordon\nJake Armstrong\nMade on Earth by Humans" (at 147.32 110.871) (layer "B.SilkS") (tstamp c1a3e1d3-23ff-417b-a43b-71f50c8a8619)
     (effects (font (size 1 1) (thickness 0.15)) (justify right mirror))
   )
-  (gr_text "IO\n3V3 3V3\nI25 I24\nI06 I26\nGND GND" (at 185.674 117.094 90) (layer "B.SilkS") (tstamp d05d9aa7-2830-4ae0-a649-b14028f946df)
+  (gr_text "IO\n3V3 3V3\nG05 G11\nG06 G13\nGND GND" (at 185.674 117.094 90) (layer "B.SilkS") (tstamp d05d9aa7-2830-4ae0-a649-b14028f946df)
     (effects (font (size 1.778 1.5) (thickness 0.3)) (justify right mirror))
   )
   (gr_text "5V" (at 177.292 81.28 90) (layer "F.SilkS") (tstamp 022dbc57-17a6-4be4-809f-347491902235)
