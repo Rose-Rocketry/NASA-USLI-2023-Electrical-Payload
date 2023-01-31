@@ -12,8 +12,8 @@
 ```
 [X] Set Hotname: rocket-pi
 [X] Enable SSH
-    [ ] Password
-    [X] Public Key: <your public key here>
+    [X] Password
+    [ ] Public Key
 [X] Set username and password
     Username: pi
 ```
