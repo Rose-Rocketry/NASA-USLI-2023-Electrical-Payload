@@ -2013,7 +2013,7 @@
     (property "Reference" "C5" (id 0) (at 201.93 40.6399 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "100nF" (id 1) (at 201.93 43.1799 0)
+    (property "Value" "100n" (id 1) (at 201.93 43.1799 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (id 2) (at 196.85 41.91 0)
