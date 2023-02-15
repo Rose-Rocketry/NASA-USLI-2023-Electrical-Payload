@@ -81,13 +81,21 @@ arm_boost=1
 # Enable GPIO shutdown
 dtoverlay=gpio-shutdown:gpio_pin=4,debounce=5000
 
-# Enable GPIO I2C bus for clock stretching support
-#dtoverlay=i2c-gpio,bus=3,i2c_gpio_sda=2,i2c_gpio_scl=3
-dtparam=i2c_arm=on
-dtoverlay=i2c-pwm-pca9685a,addr=0x54
+# Enable buck converter
+gpio=12=op,dh
+dtoverlay=gpio-poweroff:gpiopin=12,active_low=1
 
-# Add pps device on GPIO 22
-dtoverlay=pps-gpio,gpiopin=22
+# Configure pyro sense pins
+gpio=7=ip,pn
+gpio=8=ip,pn
+
+# Custom DT
+dtoverlay=motherboard
+dtparam=i2c_gpio_sda=27
+dtparam=i2c_gpio_scl=22
+dtparam=i2c_gpio_delay_us=20
+dtparam=i2c_bus=3
+dtparam=pca_addr=0x55
 
 # Disable bluetooth
 # This allows us to use the PL011 for the XBee instead

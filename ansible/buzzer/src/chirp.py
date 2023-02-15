@@ -1,7 +1,7 @@
 import gpiozero
 from time import sleep
 
-buz = gpiozero.PWMOutputDevice(13)
+buz = gpiozero.PWMOutputDevice(18)
 
 
 def chirp_ok():

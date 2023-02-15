@@ -1,0 +1,111 @@
+// Definitions for NXP PCA9685A I2C PWM controller on ARM I2C bus.
+/dts-v1/;
+/plugin/;
+
+/{
+	compatible = "brcm,bcm2835";
+
+	fragment@0 {
+		target-path = "/";
+
+		__overlay__ {
+			i2c_gpio: i2c@0 {
+				reg = <0xffffffff>;
+				compatible = "i2c-gpio";
+				// Value 0x06 is (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN), taken from decompiled dtbo file
+				gpios = <&gpio 23 0x06 /* sda */
+					 			 &gpio 24 0x06 /* scl */
+					>;
+				i2c-gpio,delay-us = <2>;        /* ~100 kHz */
+				#address-cells = <1>;
+				#size-cells = <0>;
+			};
+		};
+	};
+
+	fragment@1 {
+		target-path = "/aliases";
+		__overlay__ {
+			i2c_gpio = "/i2c@0";
+		};
+	};
+
+	fragment@2 {
+		target-path = "/__symbols__";
+		__overlay__ {
+			i2c_gpio = "/i2c@0";
+		};
+	};
+
+	fragment@3 {
+		target = <&i2c_gpio>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+
+			pca: pca@40 {
+				compatible = "nxp,pca9685-pwm";
+				#pwm-cells = <2>;
+				#gpio-cells = <2>;
+				reg = <0x40>;
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@4 {
+		target-path = "/";
+		__overlay__ {
+			status_leds: leds@0 {
+				compatible = "gpio-leds";
+				status = "okay";
+
+				led_b: led_b {
+					label = "led_b";
+					gpios = <&pca 11 1>;
+					default-state = "off";
+				};
+
+				led_r: led_r {
+					label = "led_r";
+					gpios = <&pca 12 1>;
+					default-state = "off";
+				};
+
+				led_g: led_g {
+					label = "led_g";
+					gpios = <&pca 13 1>;
+					default-state = "off";
+				};
+			};
+		};
+	};
+
+	fragment@5 {
+		target = <&i2c_gpio>;
+
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+			clock-frequency = <400000>;
+
+			mpu6050: mpu6050@68 {
+				compatible = "invensense,mpu6050";
+				reg = <0x68>;
+				// interrupt-parent = <&gpio>;
+				// interrupts = <4 2>;
+			};
+		};
+	};
+
+	__overrides__ {
+		i2c_gpio_sda = <&i2c_gpio>,"gpios:4";
+		i2c_gpio_scl = <&i2c_gpio>,"gpios:16";
+		i2c_gpio_delay_us = <&i2c_gpio>,"i2c-gpio,delay-us:0";
+		i2c_bus = <&i2c_gpio>, "reg:0";
+
+		pca_addr = <&pca>,"reg:0";
+	};
+};

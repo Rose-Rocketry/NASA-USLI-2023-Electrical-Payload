@@ -5,6 +5,10 @@ Description=xbnet
 [Service]
 Restart=always
 RestartSec=5
+ExecStartPre=raspi-gpio set 17 op dl
+ExecStartPre=sleep 1
+ExecStartPre=raspi-gpio set 17 ip pn
+ExecStartPre=sleep 1
 ExecStart=/usr/local/bin/xbnet {{ xb_device }} --serial-speed 115200 --initfile /usr/local/etc/xb-initfile.txt tun --disable-ipv6 --set-up --set-ip {{ xb_ip }}
 
 [Install]

@@ -3,6 +3,14 @@
   become: true
   gather_facts: false
   tasks:
+    - name: Copy device tree overlay
+      ansible.builtin.copy:
+        src: motherboard.dtbo
+        dest: /boot/overlays/motherboard.dtbo
+        owner: root
+        mode: 0755 # FAT doesn't support executable bit
+      notify: Reboot
+    
     - name: Copy config.txt
       ansible.builtin.copy:
         src: config.txt
