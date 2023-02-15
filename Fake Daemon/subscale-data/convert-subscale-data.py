@@ -6,7 +6,7 @@ import humanize
 tzero = 0
 g = 9.81
 
-with open("Subscale Launch Data/MPL3115.csv", "rt") as csv_file, open("mpl3115.json", "wt") as json_file:
+with open("Subscale Launch Data/MPL3115.csv", "rt") as csv_file, open("mpl3115.ndjson", "wt") as json_file:
     reader = csv.DictReader(csv_file)
     count = 0
     for row in reader:
@@ -18,7 +18,7 @@ with open("Subscale Launch Data/MPL3115.csv", "rt") as csv_file, open("mpl3115.j
     print(f"Converted {count} points")
     print(f"    json: {humanize.naturalsize(json_file.tell(), binary=True)}")
 
-with open("Subscale Launch Data/MPU6050.fixed.csv", "rt") as csv_file, open("mpu6050.json", "wt") as json_file:
+with open("Subscale Launch Data/MPU6050.fixed.csv", "rt") as csv_file, open("mpu6050.ndjson", "wt") as json_file:
     csv_file.readline() # Skip header, we'll use our own shorter keys
     reader = csv.DictReader(csv_file, ["timestamp", "temp", "ax", "ay", "az", "gx", "gy", "gz"])
     count = 0

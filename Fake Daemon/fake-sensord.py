@@ -16,9 +16,9 @@ def run(data_dir, mqtt_server, mqtt_port, seek, stop):
 
     print("Loading data")
     for file in data_dir.iterdir():
-        if file.name.endswith(".json"):
+        if file.name.endswith(".ndjson"):
             print(f"    {file.name} - ", end="")
-            id = file.name.removesuffix(".json")
+            id = file.name.removesuffix(".ndjson")
             
             total_datapoints = 0
             this_datapoints = []
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         prog = 'fake-sensord',
         description = 'Fake sensor daemon that publishes JSON sensor data to an MQTT broker')
     
-    parser.add_argument("--data-dir", help="Folder containing .json files", type=Path, required=True)
+    parser.add_argument("--data-dir", help="Folder containing .ndjson files", type=Path, required=True)
     parser.add_argument("--mqtt-server", help="MQTT server to connect to", default="127.0.0.1")
     parser.add_argument("--mqtt-port", help="MQTT port", type=int, default=1883)
     parser.add_argument("--seek", help="Immediately skip to this timestamp", type=int, default=None)
