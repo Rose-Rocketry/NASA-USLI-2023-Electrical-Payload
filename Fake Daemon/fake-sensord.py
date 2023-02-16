@@ -33,7 +33,7 @@ def run(data_dir, mqtt_server, mqtt_port, seek, stop, speed):
                     if seek != None and parsed["timestamp"] < seek:
                         continue
 
-                    if stop != None and parsed["timestamp"] < stop:
+                    if stop != None and parsed["timestamp"] > stop:
                         continue
 
                     this_datapoints.append({
