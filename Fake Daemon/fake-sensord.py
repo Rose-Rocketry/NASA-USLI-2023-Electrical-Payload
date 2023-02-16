@@ -11,7 +11,7 @@ class DataPoint(TypedDict):
     id: str
     data: Any
 
-def run(data_dir, mqtt_server, mqtt_port, seek, stop, speed):
+def run(data_dir, mqtt_server, mqtt_port, seek, stop, speed, keep_timestamps):
     datapoints: list[DataPoint] = []
 
     print("Loading data")
@@ -57,15 +57,21 @@ def run(data_dir, mqtt_server, mqtt_port, seek, stop, speed):
     client.connect(mqtt_server, mqtt_port)
     client.loop_start()
 
-    t0 = (time.time() * speed) - datapoints[0]['timestamp']
+    start_time = time.time()
+    publish_time_offset = start_time - datapoints[0]['timestamp']
     for datapoint in tqdm(datapoints, "Sending packets", unit=" packets"):
-        now = (time.time() * speed)
+        # When speed is not 1, this simulates the clock running slow/fast
+        # When speed is 1 (default), this is the same as just time.time()
+        now = start_time + ((time.time() - start_time) * speed)
         
-        # Adjust from relative times to real time
-        datapoint["data"]["timestamp"] = datapoint["timestamp"] + t0
+        publish_timestamp = datapoint["timestamp"] + publish_time_offset
 
-        if now < datapoint["data"]["timestamp"]:
-            time.sleep(datapoint["data"]["timestamp"] - now)
+        if not keep_timestamps:
+            # Adjust update timestamps in published packets, if requested
+            datapoint["data"]["timestamp"] = publish_timestamp
+
+        if now < publish_timestamp:
+            time.sleep(publish_timestamp - now)
 
         client.publish(f"sensors/{datapoint['id']}", json.dumps(datapoint["data"]))
 
@@ -80,6 +86,7 @@ if __name__ == "__main__":
     parser.add_argument("--seek", help="Immediately skip to this timestamp", type=int, default=None)
     parser.add_argument("--stop", help="Stop sending at this timestamp", type=int, default=None)
     parser.add_argument("--speed", help="Relative speed to transmit at", type=float, default=1.0)
+    parser.add_argument("--keep-timestamps", help="Keep original timestamps instead of shifting them to the current time", action='store_true')
 
     args = parser.parse_args()
     run(**vars(args))
