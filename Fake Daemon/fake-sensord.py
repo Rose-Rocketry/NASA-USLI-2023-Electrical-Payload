@@ -11,7 +11,7 @@ class DataPoint(TypedDict):
     id: str
     data: Any
 
-def run(data_dir, mqtt_server, mqtt_port, seek, stop):
+def run(data_dir, mqtt_server, mqtt_port, seek, stop, speed):
     datapoints: list[DataPoint] = []
 
     print("Loading data")
@@ -57,9 +57,9 @@ def run(data_dir, mqtt_server, mqtt_port, seek, stop):
     client.connect(mqtt_server, mqtt_port)
     client.loop_start()
 
-    t0 = time.time() - datapoints[0]['timestamp']
+    t0 = (time.time() * speed) - datapoints[0]['timestamp']
     for datapoint in tqdm(datapoints, "Sending packets", unit=" packets"):
-        now = time.time()
+        now = (time.time() * speed)
         
         # Adjust from relative times to real time
         datapoint["data"]["timestamp"] = datapoint["timestamp"] + t0
@@ -79,6 +79,7 @@ if __name__ == "__main__":
     parser.add_argument("--mqtt-port", help="MQTT port", type=int, default=1883)
     parser.add_argument("--seek", help="Immediately skip to this timestamp", type=int, default=None)
     parser.add_argument("--stop", help="Stop sending at this timestamp", type=int, default=None)
+    parser.add_argument("--speed", help="Relative speed to transmit at", type=float, default=1.0)
 
     args = parser.parse_args()
     run(**vars(args))
