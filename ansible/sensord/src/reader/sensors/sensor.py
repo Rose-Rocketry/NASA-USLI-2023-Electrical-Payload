@@ -1,16 +1,16 @@
 from threading import Thread
 from typing import Callable
 from abc import ABC, abstractmethod
-from lib_sensor_encoding import MQTTSensorClient
 import logging
 import time
-import msgpack
-import threading
+import paho.mqtt.client as mqtt
+import json
 
 META_TRANSMIT_INTERVAL = 15
+SENSOR_PREFIX = "sensors/"
 
 class Sensor(ABC):
-    def __init__(self, client: MQTTSensorClient) -> None:
+    def __init__(self, client: mqtt.Client) -> None:
         self._client = client
         self._logger = logging.getLogger(f"sensor.{self._get_sensor_id()}")
 
@@ -27,15 +27,18 @@ class Sensor(ABC):
         pass
 
     def _send_meta_thread(self):
-        meta = msgpack.packb(self._get_sensor_metadata)
-        while True:
-            self._client
+        pass
+        # meta = msgpack.packb(self._get_sensor_metadata)
+        # while True:
+        #     self._client
 
     def publish(self, data, **kwargs):
-        self._client.publish_sensor_data(self._get_sensor_id(), data, **kwargs)
+        if "timestamp" not in data:
+            data["timestamp"] = time.time()
+
+        self._client.publish(SENSOR_PREFIX + self._get_sensor_id(), json.dumps(data), **kwargs)
 
     def start(self) -> Thread:
-        self._client.create_sensor(self._get_sensor_id(), self._get_sensor_metadata())
         self._run()
 
 
@@ -43,7 +46,7 @@ POLL_BACKOFF = 1
 POLL_BACKOFF_COUNT = 5
 
 class PollingSensor(Sensor):
-    def __init__(self, client: MQTTSensorClient) -> None:
+    def __init__(self, client: mqtt.Client) -> None:
         self._failed_polls = 0
 
         super().__init__(client)

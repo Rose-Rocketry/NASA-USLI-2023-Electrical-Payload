@@ -16,7 +16,7 @@
 				gpios = <&gpio 23 0x06 /* sda */
 					 			 &gpio 24 0x06 /* scl */
 					>;
-				i2c-gpio,delay-us = <2>;        /* ~100 kHz */
+				i2c-gpio,delay-us = <2>;
 				#address-cells = <1>;
 				#size-cells = <0>;
 			};
@@ -61,8 +61,8 @@
 				compatible = "gpio-leds";
 				status = "okay";
 
-				led_b: led_b {
-					label = "led_b";
+				led_g: led_g {
+					label = "led_g";
 					gpios = <&pca 11 1>;
 					default-state = "off";
 				};
@@ -73,8 +73,8 @@
 					default-state = "off";
 				};
 
-				led_g: led_g {
-					label = "led_g";
+				led_b: led_b {
+					label = "led_b";
 					gpios = <&pca 13 1>;
 					default-state = "off";
 				};
@@ -100,11 +100,49 @@
 		};
 	};
 
+
+	fragment@6 {
+		target-path = "/";
+
+		__overlay__ {
+			i2c_gpio_exp: i2c@4 {
+				reg = <0xffffffff>;
+				compatible = "i2c-gpio";
+				// Value 0x06 is (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN), taken from decompiled dtbo file
+				gpios = <&gpio 23 0x06 /* sda */
+					 			 &gpio 24 0x06 /* scl */
+					>;
+				i2c-gpio,delay-us = <2>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+			};
+		};
+	};
+
+	fragment@7 {
+		target-path = "/aliases";
+		__overlay__ {
+			i2c_gpio_exp = "/i2c@4";
+		};
+	};
+
+	fragment@8 {
+		target-path = "/__symbols__";
+		__overlay__ {
+			i2c_gpio_exp = "/i2c@4";
+		};
+	};
+
 	__overrides__ {
 		i2c_gpio_sda = <&i2c_gpio>,"gpios:4";
 		i2c_gpio_scl = <&i2c_gpio>,"gpios:16";
 		i2c_gpio_delay_us = <&i2c_gpio>,"i2c-gpio,delay-us:0";
 		i2c_bus = <&i2c_gpio>, "reg:0";
+
+		i2c_exp_gpio_sda = <&i2c_gpio_exp>,"gpios:4";
+		i2c_exp_gpio_scl = <&i2c_gpio_exp>,"gpios:16";
+		i2c_exp_gpio_delay_us = <&i2c_gpio_exp>,"i2c-gpio,delay-us:0";
+		i2c_exp_bus = <&i2c_gpio_exp>, "reg:0";
 
 		pca_addr = <&pca>,"reg:0";
 	};

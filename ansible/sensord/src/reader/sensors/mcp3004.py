@@ -1,41 +1,55 @@
 from .sensor import PollingSensor
-from lib_sensor_encoding import SensorMeta, EncodingType, TimestampReading
+import iio
+import os
+
+# Calculated experientially, regression on y = k*x
+LSB_VALUE = 1/27.6982857142857
+MINIMUM_CELL_VOLTAGE = 3.3
+CELLS_SERIES = 3
+MINIMUM_VOLTAGE = MINIMUM_CELL_VOLTAGE * CELLS_SERIES
+CONSECUTIVE_UNDERVOLTAGE_SHUTDOWN = 10
 
 class MCP3004Sensor(PollingSensor):
-    # Calculated experientially, regression on y = k*x
-    LSB_VALUE = 1/27.6982857142857
-
     def _get_sensor_id(self) -> str:
         return "battery"
 
-    def _get_sensor_metadata(self) -> SensorMeta:
+    def _get_sensor_metadata(self):
         return {
-            "name": "battery",
-            "readings": [
-                TimestampReading,
+            "name": "Battery",
+            "channels": [
+                {"name": "timestamp", "type": "timestamp"},
                 {
-                    "name": "voltage",
-                    "unit": "V",
-                    "encoding": EncodingType.bits_integer_scaled,
-                    "bits": 16,
-                    "lsb_value": self.LSB_VALUE,
-                    "signed": False,
-                },
-            ],
+                    "name": "Battery Voltage",
+                    "type": "number",
+                    "unit": "V"
+                }
+            ]
         }
 
     def _get_sensor_poll_rate(self) -> float:
         return 2
 
     def _run(self) -> None:
-        self._fd = open("/sys/bus/iio/devices/iio:device0/in_voltage0_raw", "rb", buffering=0)
+        self.dev = iio.Context().find_device("mcp3008")
+        self.ch = self.dev.find_channel("voltage0")
+        self.consecutive_undervoltages = 0
 
         return super()._run()
 
     def _poll(self) -> None:
-        self._fd.seek(0)
-        data = int(self._fd.read())
+        voltage = int(self.ch.attrs["raw"].value) * LSB_VALUE
 
-        self._client.publish_sensor_data_raw(self._get_sensor_id(), data.to_bytes(2, 'big'))
+        if voltage < MINIMUM_VOLTAGE:
+            print(f"WARNING: BATTERY VOLTAGE OF {voltage:.2f}V IS BELOW MINIMUM {MINIMUM_VOLTAGE:.2f}V")
+            self.consecutive_undervoltages += 1
+            if self.consecutive_undervoltages > CONSECUTIVE_UNDERVOLTAGE_SHUTDOWN:
+                print("SHUTTING DOWN SYSTEM")
+                os.system("shutdown now")
+        else:
+            self.consecutive_undervoltages = 0
+
+        self.publish({
+            "voltage": voltage
+        })
 
 SENSOR_CLASS = MCP3004Sensor

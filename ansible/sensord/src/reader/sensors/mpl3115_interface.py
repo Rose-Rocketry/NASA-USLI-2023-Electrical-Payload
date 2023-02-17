@@ -100,25 +100,24 @@ class MPL3115Interface:
             status_byte = mpl3115_bytes[0]
 
             if status_byte == 0:
-                sleep(0.01)
+                sleep(0.05)
                 continue
 
-            data_bytes = mpl3115_bytes[1:]
+            altitude_bytes = mpl3115_bytes[1:4]
+            temperature_bytes = mpl3115_bytes[4:]
 
-            return data_bytes
+            altitude = int.from_bytes(
+                altitude_bytes,
+                "big",
+                signed=False,
+            ) / 256
+            temperature = int.from_bytes(
+                temperature_bytes,
+                "big",
+                signed=True,
+            ) / 256
 
-        altitude_bytes = mpl3115_bytes[1:4]
-        temperature_bytes = mpl3115_bytes[4:]
-
-        altitude = int.from_bytes(
-            altitude_bytes,
-            "big",
-            signed=False,
-        ) / 256
-        temperature = int.from_bytes(
-            temperature_bytes,
-            "big",
-            signed=True,
-        ) / 256
-
-        self.log_values(temperature, altitude)
+            return {
+                "altitude": altitude,
+                "temp": temperature
+            }

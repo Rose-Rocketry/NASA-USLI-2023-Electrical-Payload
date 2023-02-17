@@ -1,14 +1,14 @@
 - name: Install and setup sensord
   hosts: rocket,&pi
   vars:
-    lse_pip_url: https://github.com/Rose-Rocketry/lib_sensor_encoding/archive/v0.1.1.tar.gz
     venv: /opt/sensord_venv
     units:
     # TODO: Uncomment when we get these sensors working
       - sensor-reader@system.service
       # - sensor-reader@mpu6050.service
-      # - sensor-reader@mpl3115.service
-      # - sensor-reader@mcp3004.service
+      - sensor-reader@bno055.service
+      - sensor-reader@mpl3115.service
+      - sensor-reader@mcp3004.service
       # - sensor-reader@gpsd.service
       # - sensor-logger.service
   gather_facts: false
@@ -19,14 +19,16 @@
         name:
           - python3-pip
           - python3-venv
+          - python3-libiio
     - name: Setup venv
       ansible.builtin.pip:
         virtualenv_command: python3 -m venv
         virtualenv: "{{ venv }}"
+        virtualenv_site_packages: true
         name: 
-          - "{{ lse_pip_url }}"
           - Adafruit_PureIO
           - psutil
+          - paho-mqtt
       notify: Restart services
     - name: Copy source
       ansible.posix.synchronize:

@@ -1,34 +1,33 @@
 from .sensor import PollingSensor
-from lib_sensor_encoding import SensorMeta, EncodingType, TimestampReading
 from .mpl3115_interface import MPL3115Interface
 
 class MPL3115Sensor(PollingSensor):
     def _get_sensor_id(self) -> str:
         return "mpl3115"
 
-    def _get_sensor_metadata(self) -> SensorMeta:
+    def _get_sensor_metadata(self) :
         return {
-            "name":
-            "MPL3115",
-            "readings": [
-                TimestampReading,
-                {
-                    "name": "altitude",
-                    "unit": "m",
-                    "encoding": EncodingType.bits_integer_scaled,
-                    "bits": 24,
-                    "lsb_value": 1 / 256,
-                    "signed": False,
-                },
-                {
-                    "name": "temperature",
-                    "unit": "°C",
-                    "encoding": EncodingType.bits_integer_scaled,
-                    "bits": 16,
-                    "lsb_value": 1 / 256,
-                    "signed": True,
-                },
-            ],
+            # "name":
+            # "MPL3115",
+            # "readings": [
+            #     TimestampReading,
+            #     {
+            #         "name": "altitude",
+            #         "unit": "m",
+            #         "encoding": EncodingType.bits_integer_scaled,
+            #         "bits": 24,
+            #         "lsb_value": 1 / 256,
+            #         "signed": False,
+            #     },
+            #     {
+            #         "name": "temperature",
+            #         "unit": "°C",
+            #         "encoding": EncodingType.bits_integer_scaled,
+            #         "bits": 16,
+            #         "lsb_value": 1 / 256,
+            #         "signed": True,
+            #     },
+            # ],
         }
 
     def _get_sensor_poll_rate(self) -> float:
@@ -41,6 +40,6 @@ class MPL3115Sensor(PollingSensor):
 
     def _poll(self) -> None:
         data = self._interface.read_data()
-        self._client.publish_sensor_data_raw(self._get_sensor_id(), data)
+        self.publish(data)
 
 SENSOR_CLASS = MPL3115Sensor

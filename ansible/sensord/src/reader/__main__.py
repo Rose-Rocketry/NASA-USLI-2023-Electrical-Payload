@@ -1,9 +1,9 @@
-from lib_sensor_encoding import MQTTSensorClient
 from threading import Thread
 from time import sleep
 from importlib import import_module
 import logging
 import sys
+import paho.mqtt.client as mqtt
 
 from .sensors.sensor import Sensor
 
@@ -17,10 +17,11 @@ def main():
     sensor_package_name = sys.argv[1]
 
     logger = logging.getLogger("main")
-    client = MQTTSensorClient()
+    client = mqtt.Client(client_id=f"sensord-reader-{sensor_package_name}", clean_session=True)
 
     logger.info("Starting MQTT Client")
-    client.run_background()
+    client.connect_async("127.0.0.1")
+    client.loop_start()
 
     logger.info("Creating Sensor")
 

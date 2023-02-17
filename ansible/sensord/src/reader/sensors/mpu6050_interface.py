@@ -23,15 +23,18 @@ _MPU6050_GYRO_OUT = 0x43  # base address for sensor data reads
 _MPU6050_SIG_PATH_RESET = 0x68  # register to reset sensor signal paths
 _MPU6050_USER_CTRL = 0x6A  # FIFO and I2C Master control register
 _MPU6050_PWR_MGMT_1 = 0x6B  # Primary power/sleep control register
+_MPU6050_PWR_MGMT_1_DEVICE_RESET = 0x80
+_MPU6050_PWR_MGMT_1_CLKSEL = 0x01 # PLL with X axis gyroscope reference
 _MPU6050_PWR_MGMT_2 = 0x6C  # Secondary power/sleep control register
 _MPU6050_WHO_AM_I = 0x75  # Divice ID register
 
+g = 9.81
 
 class AccelRange(Enum):
-    RANGE_2_G = (0, 2 / 32768)  # +/- 2g (default value)
-    RANGE_4_G = (1, 4 / 32768)  # +/- 4g
-    RANGE_8_G = (2, 8 / 32768)  # +/- 8g
-    RANGE_16_G = (3, 16 / 32768)  # +/- 16g
+    RANGE_2_G = (0, 9.81 * 2 / 32768)  # +/- 2g (default value)
+    RANGE_4_G = (1, 9.81 * 4 / 32768)  # +/- 4g
+    RANGE_8_G = (2, 9.81 * 8 / 32768)  # +/- 8g
+    RANGE_16_G = (3, 9.81 * 16 / 32768)  # +/- 16g
 
     def __init__(self, i2c_value: int, lsb: float) -> None:
         self.i2c_value = i2c_value
@@ -91,6 +94,12 @@ class MPU6050Interface:
 
         # TODO: This config code isn't working properly
 
+        # Reset device
+        self.bus.write_byte_data(
+            _MPU6050_DEFAULT_ADDRESS,
+            _MPU6050_PWR_MGMT_1,
+            _MPU6050_PWR_MGMT_1_DEVICE_RESET,
+        )
         self.bus.write_byte_data(
             _MPU6050_DEFAULT_ADDRESS,
             _MPU6050_CONFIG,
@@ -109,12 +118,34 @@ class MPU6050Interface:
         self.bus.write_byte_data(
             _MPU6050_DEFAULT_ADDRESS,
             _MPU6050_PWR_MGMT_1,
-            0x00,
+            _MPU6050_PWR_MGMT_1_CLKSEL,
         )
+        # self.bus.write_byte_data(
+        #     _MPU6050_DEFAULT_ADDRESS,
+        #     _MPU6050_PWR_MGMT_2,
+        #     self.rate.i2c_value << 6,
+        # )
 
     def read_data(self) -> bytes:
-        return self.bus.read_i2c_block_data(
+        data = self.bus.read_i2c_block_data(
             _MPU6050_DEFAULT_ADDRESS,
             _MPU6050_ACCEL_OUT,
-            14,
+            6,
+            # 14,
         )
+
+        ax = int.from_bytes(data[0:2], 'big', signed=True) * self.accel_range.lsb
+        ay = int.from_bytes(data[2:4], 'big', signed=True) * self.accel_range.lsb
+        az = int.from_bytes(data[4:6], 'big', signed=True) * self.accel_range.lsb
+
+        # temp = int.from_bytes(data[6:8], 'big', signed=True) * self.accel_range.lsb
+
+        # gx = int.from_bytes(data[8:10], 'big', signed=True) * self.gyro_range.lsb
+        # gy = int.from_bytes(data[10:12], 'big', signed=True) * self.gyro_range.lsb
+        # gz = int.from_bytes(data[12:14], 'big', signed=True) * self.gyro_range.lsb
+
+        return {
+            "accel": (ax, ay, az),
+            # "gyro": (gx, gy, gz),
+            # "temp": temp,
+        }

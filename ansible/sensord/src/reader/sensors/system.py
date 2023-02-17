@@ -1,12 +1,12 @@
 from .sensor import PollingSensor
 from pathlib import Path
 import psutil
-
-
-CPU_TEMP_PATH = Path("/sys/class/thermal/thermal_zone0/temp")
-
+import paho.mqtt.client as mqtt
 
 class SystemSensor(PollingSensor):
+    def __init__(self, client: mqtt.Client) -> None:
+        super().__init__(client)
+
     def _get_sensor_id(self) -> str:
         return "system"
 
@@ -66,28 +66,26 @@ class SystemSensor(PollingSensor):
         return 0.5
 
     def _poll(self) -> None:
-        cpu_temperature = None
-
-        if CPU_TEMP_PATH.exists():
-            with open(CPU_TEMP_PATH, "rt") as file:
-                cpu_temperature = int(file.read()) / 1000
-
         cpu_usage = psutil.cpu_percent()
         cpu_frequency = psutil.cpu_freq().current
         memory_usage = psutil.virtual_memory().percent
         swap_usage = psutil.swap_memory().percent
         disk_usage = psutil.disk_usage("/").percent
 
+        cpu_temperature = None
+        temperature_data = psutil.sensors_temperatures()
+        if "cpu_thermal" in temperature_data:
+            cpu_temperature = temperature_data['cpu_thermal'][0].current
+
         self.publish(
-            (
-                cpu_temperature,
-                cpu_usage,
-                cpu_frequency,
-                memory_usage,
-                swap_usage,
-                disk_usage,
-            ),
-            prepend_timestamp=True,
+            {
+                "cpu_temperature": cpu_temperature,
+                "cpu_usage": cpu_usage,
+                "cpu_frequency": cpu_frequency,
+                "memory_usage": memory_usage,
+                "swap_usage": swap_usage,
+                "disk_usage": disk_usage,
+            },
         )
 
 
