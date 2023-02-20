@@ -34,7 +34,7 @@ class Sensor(ABC):
         payload = json.dumps({"meta": self._get_sensor_metadata()})
         self._logger.info("Star")
         while True:
-            self._client.publish(self._get_sensor_topic(), payload, qos=1, retain=True)
+            self._client.publish(self._get_sensor_topic(), payload, retain=True)
             time.sleep(META_TRANSMIT_INTERVAL)
 
     def publish(self, data, **kwargs):
