@@ -5,8 +5,10 @@ import os
 # Calculated experientially, regression on y = k*x
 LSB_VALUE = 1/27.6982857142857
 MINIMUM_CELL_VOLTAGE = 3.3
+MAXIMUM_CELL_VOLTAGE = 4.2
 CELLS_SERIES = 3
 MINIMUM_VOLTAGE = MINIMUM_CELL_VOLTAGE * CELLS_SERIES
+MAXIMUM_VOLTAGE = MAXIMUM_CELL_VOLTAGE * CELLS_SERIES
 CONSECUTIVE_UNDERVOLTAGE_SHUTDOWN = 10
 
 class MCP3004Sensor(PollingSensor):
@@ -17,11 +19,13 @@ class MCP3004Sensor(PollingSensor):
         return {
             "name": "Battery",
             "channels": [
-                {"name": "timestamp", "type": "timestamp"},
                 {
+                    "key": "voltage",
                     "name": "Battery Voltage",
                     "type": "number",
-                    "unit": "V"
+                    "unit": "V",
+                    "minimum": MINIMUM_VOLTAGE,
+                    "maximum": MAXIMUM_VOLTAGE,
                 }
             ]
         }

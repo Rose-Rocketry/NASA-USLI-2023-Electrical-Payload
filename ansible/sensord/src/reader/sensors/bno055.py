@@ -9,7 +9,20 @@ class BNO055Sensor(PollingSensor):
         return "bno055"
 
     def _get_sensor_metadata(self):
-        return {}
+        return {
+            "name": "BNO055 - IMU Mode",
+            "channels": [
+                {
+                    "key": "gravity",
+                    "name": "Gravity",
+                    "type": "vector",
+                    "unit": "m/s\u00b2",
+                    "components": ["x", "y", "z"],
+                    "minimum": -20,
+                    "maximum": 20,
+                },
+            ],
+        }
 
     def _get_sensor_poll_rate(self) -> float:
         return 5
@@ -22,5 +35,6 @@ class BNO055Sensor(PollingSensor):
     def _poll(self) -> None:
         data = self._interface.read_data()
         self.publish(data)
+
 
 SENSOR_CLASS = BNO055Sensor

@@ -6,8 +6,9 @@ import time
 import paho.mqtt.client as mqtt
 import json
 
-META_TRANSMIT_INTERVAL = 15
+META_TRANSMIT_INTERVAL = 30
 SENSOR_PREFIX = "sensors/"
+
 
 class Sensor(ABC):
     def __init__(self, client: mqtt.Client) -> None:
@@ -22,28 +23,36 @@ class Sensor(ABC):
     def _get_sensor_id(self) -> str:
         pass
 
+    def _get_sensor_topic(self) -> str:
+        return SENSOR_PREFIX + self._get_sensor_id()
+
     @abstractmethod
     def _run(self) -> None:
         pass
 
     def _send_meta_thread(self):
-        pass
-        # meta = msgpack.packb(self._get_sensor_metadata)
-        # while True:
-        #     self._client
+        payload = json.dumps({"meta": self._get_sensor_metadata()})
+        self._logger.info("Star")
+        while True:
+            self._client.publish(self._get_sensor_topic(), payload, qos=1, retain=True)
+            time.sleep(META_TRANSMIT_INTERVAL)
 
     def publish(self, data, **kwargs):
         if "timestamp" not in data:
             data["timestamp"] = time.time()
 
-        self._client.publish(SENSOR_PREFIX + self._get_sensor_id(), json.dumps(data), **kwargs)
+        payload = json.dumps({"data": data})
+        self._client.publish(self._get_sensor_topic(), payload, **kwargs)
 
-    def start(self) -> Thread:
+    def start(self):
+        send_meta = Thread(target=self._send_meta_thread, name="send_meta", daemon=True)
+        send_meta.start()
         self._run()
 
 
 POLL_BACKOFF = 1
 POLL_BACKOFF_COUNT = 5
+
 
 class PollingSensor(Sensor):
     def __init__(self, client: mqtt.Client) -> None:
@@ -55,10 +64,9 @@ class PollingSensor(Sensor):
         delay = 1 / self._get_sensor_poll_rate()
         next_reading = 0
         while True:
-            
             now = time.monotonic()
             next_reading += delay
-            if (now > next_reading):
+            if now > next_reading:
                 next_reading = now  # Sensor read took too long
             else:
                 time.sleep(next_reading - now)
