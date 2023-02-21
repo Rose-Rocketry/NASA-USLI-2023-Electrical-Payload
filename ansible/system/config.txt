@@ -95,9 +95,9 @@ dtparam=i2c_gpio_sda=27
 dtparam=i2c_gpio_scl=22
 dtparam=i2c_gpio_delay_us=2
 dtparam=i2c_bus=3
-dtparam=i2c_exp_gpio_sda=13
-dtparam=i2c_exp_gpio_scl=11
-dtparam=i2c_exp_gpio_delay_us=2
+dtparam=i2c_exp_gpio_sda=11
+dtparam=i2c_exp_gpio_scl=13
+dtparam=i2c_exp_gpio_delay_us=5
 dtparam=i2c_exp_bus=4
 dtparam=pca_addr=0x55
 
