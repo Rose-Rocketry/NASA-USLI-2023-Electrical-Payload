@@ -6,7 +6,7 @@ Description=rtl_fm and socat
 ; 2000 maximum payload size (max supported by direwolf)
 Restart=always
 RestartSec=5
-ExecStart=socat -T10 -b2000 EXEC:"rtl_fm -f 145M" UDP4:localhost:7355
+ExecStart=socat -T10 -b2000 EXEC:"rtl_fm -f 144.39M" UDP4:localhost:7355
 
 [Install]
 WantedBy=multi-user.target

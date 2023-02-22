@@ -6,6 +6,6 @@
 
 # Sensors
 - ansible.builtin.import_playbook: sdr/playbook.yaml
-# - ansible.builtin.import_playbook: direwolf/playbook.yaml
+- ansible.builtin.import_playbook: direwolf/playbook.yaml
 # - ansible.builtin.import_playbook: gps/playbook.yaml
 - ansible.builtin.import_playbook: sensord/playbook.yaml
