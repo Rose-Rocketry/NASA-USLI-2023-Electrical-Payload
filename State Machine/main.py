@@ -4,51 +4,49 @@ import queue
 import threading
 import logging
 import enum
+import math
+from servo import Servo
+from time import sleep
 
 logging.basicConfig(level=logging.INFO)
 
 TOPIC_PREFIX = "sensors/"
 
-data_queue_lock = threading.Lock()
-data_queue: queue.Queue[mqtt.MQTTMessage] = None
+data_queue: queue.Queue[tuple[str, dict]] = queue.Queue(10)
 
 
 def on_mqtt_connect(client, _, flags, rc):
     client.subscribe(TOPIC_PREFIX + "mpl3115", qos=0)
-    # client.subscribe(TOPIC_PREFIX + "mpu6050", qos=0)
+    client.subscribe(TOPIC_PREFIX + "bno055", qos=0)
 
 
 def on_mqtt_message(client, _, message: mqtt.MQTTMessage):
     id = message.topic.removeprefix(TOPIC_PREFIX)
     decoded = json.loads(message.payload)
-    if data_queue != None:
-        data_queue.put_nowait((id, decoded))
+    if 'data' in decoded:
+        if data_queue.full():
+            dropped_id, _ = data_queue.get_nowait()
+            print(f"queue full, packet dropped: {dropped_id}")
+            
+        data_queue.put_nowait((id, decoded['data']))
 
 
 client: mqtt.Client = None
 
 
 def iter_packets(filter_for_id: str):
-    global data_queue
+    while True:
+        id, decoded = data_queue.get()
 
-    with data_queue_lock:
-        try:
-            if data_queue != None:
-                raise RuntimeError("iter_packets recursion detected")
+        if id != filter_for_id:
+            continue
 
-            data_queue = queue.Queue[mqtt.MQTTMessage]()
+        yield decoded
 
-            while True:
-                id, decoded = data_queue.get()
+def get_packet(filter_for_id: str):
+    for packet in iter_packets(filter_for_id):
+        return packet
 
-                if id != filter_for_id:
-                    continue
-
-                yield decoded
-
-        except GeneratorExit:
-            data_queue = None
-            return
 
 def iter_spaced_pairs(gap, iterator):
     buffer = []
@@ -63,17 +61,40 @@ class States(enum.Enum):
     LAUNCHPAD = enum.auto()
     FLYING = enum.auto()
     LANDED = enum.auto()
-
+    ORIENT = enum.auto()
+    DONE = enum.auto()
 
 LAUNCH_DETECT_ALTITUDE_DELTA = 500
 FLYING_MIN_DURATION = 300
 FLYING_STABLE_DURATION = 60
 FLYING_STABLE_GAP = 10
 FLYING_STABLE_MAX_SPEED = 2
+VECTOR_DOWN = (0, 0, 1)
+VECTOR_SIDE = (1, 0, 0)
+ORIENT_STAGE1_POWER = 1
+ORIENT_STAGE1_THRESHOLD = math.radians(90)
+ORIENT_STAGE2_P = 0.25
+ORIENT_STAGE2_K = 0.25
+ORIENT_STAGE2_THRESHOLD = math.radians(1)
+
+def dot(a, b):
+    return sum(an * bn for an, bn in zip(a, b))
+
+def minus(a, b):
+    return tuple(an - bn for an, bn in zip(a, b))
+
+def get_orient_angle():
+    gravity = get_packet("bno055")['gravity']
+    a = dot(gravity, VECTOR_SIDE)
+    b = dot(gravity, VECTOR_DOWN)
+    angle = math.atan2(a, b)
+    print(f"angle={angle}")
+    return angle
 
 
 def event_loop():
-    state = States.LAUNCHPAD
+    # state = States.LAUNCHPAD
+    state = States.ORIENT
 
     while True:
         if state == States.LAUNCHPAD:
@@ -122,7 +143,31 @@ def event_loop():
                     state = States.LANDED
                     break
         elif state == States.LANDED:
-            # TODO: Next Step
+            # TODO: Deploy Legs
+            return
+        elif state == States.ORIENT:
+            with Servo(0) as s0:
+                if(abs(get_orient_angle()) > ORIENT_STAGE1_THRESHOLD):
+                    angle = get_orient_angle()
+
+                    power = math.copysign(ORIENT_STAGE1_POWER, angle)
+                    print(f"Orient stage 1, power={power}")
+                    s0.set_power(power)
+
+                    while abs(angle) > ORIENT_STAGE1_THRESHOLD:
+                        angle = get_orient_angle()
+
+                angle = get_orient_angle()
+                while abs(angle) >= ORIENT_STAGE2_THRESHOLD:
+                    angle = get_orient_angle()
+                    power = angle * ORIENT_STAGE2_P + math.copysign(ORIENT_STAGE2_K, angle)
+                    print(f"Orient stage 2, power={power}")
+                    s0.set_power(power)
+                
+                print(f"Orient final angle: {math.degrees(angle)}")
+                state = States.DONE
+                    
+        elif state == States.DONE:
             return
         else:
             raise RuntimeError(f"Unknown State {state}")
