@@ -29,6 +29,7 @@
           - Adafruit_PureIO
           - psutil
           - paho-mqtt
+          - humanize
       notify: Restart services
     - name: Copy source
       ansible.posix.synchronize:
