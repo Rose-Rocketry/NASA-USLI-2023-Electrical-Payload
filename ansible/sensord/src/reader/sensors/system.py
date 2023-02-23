@@ -25,8 +25,7 @@ class SystemSensor(PollingSensor):
                 {
                     "key": "cpu_usage",
                     "name": f"CPU Usage ({psutil.cpu_count()} cores)",
-                    "type": "vector",
-                    "components": [f"core {i}" for i in range(psutil.cpu_count())],
+                    "type": "number",
                     "unit": "%",
                     "minimum": 0,
                     "maximum": 100,
@@ -66,7 +65,7 @@ class SystemSensor(PollingSensor):
         return 0.5
 
     def _poll(self) -> None:
-        cpu_usage = psutil.cpu_percent(percpu=True)
+        cpu_usage = psutil.cpu_percent()
         cpu_frequency = psutil.cpu_freq().current
         memory_usage = psutil.virtual_memory().percent
         swap_usage = psutil.swap_memory().percent

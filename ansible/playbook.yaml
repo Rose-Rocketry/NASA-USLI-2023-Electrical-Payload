@@ -1,4 +1,5 @@
 - ansible.builtin.import_playbook: system/playbook.yaml
+- ansible.builtin.import_playbook: buzzer/playbook.yaml
 
 # Networking
 - ansible.builtin.import_playbook: xbnet/playbook.yaml

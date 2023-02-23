@@ -10,7 +10,7 @@
       - sensor-reader@mpl3115.service
       - sensor-reader@mcp3004.service
       # - sensor-reader@gpsd.service
-      # - sensor-logger.service
+      - sensor-logger.service
   gather_facts: false
   become: true
   tasks:
@@ -20,6 +20,7 @@
           - python3-pip
           - python3-venv
           - python3-libiio
+          - python3-psutil
     - name: Setup venv
       ansible.builtin.pip:
         virtualenv_command: python3 -m venv
@@ -27,7 +28,6 @@
         virtualenv_site_packages: true
         name: 
           - Adafruit_PureIO
-          - psutil
           - paho-mqtt
           - humanize
       notify: Restart services
