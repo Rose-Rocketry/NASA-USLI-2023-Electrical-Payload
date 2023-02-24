@@ -9,7 +9,7 @@
       - sensor-reader@bno055.service
       - sensor-reader@mpl3115.service
       - sensor-reader@mcp3004.service
-      # - sensor-reader@gpsd.service
+      - sensor-reader@kiss.service
       - sensor-logger.service
   gather_facts: false
   become: true
@@ -30,6 +30,7 @@
           - Adafruit_PureIO
           - paho-mqtt
           - humanize
+          - kiss3
       notify: Restart services
     - name: Copy source
       ansible.posix.synchronize:

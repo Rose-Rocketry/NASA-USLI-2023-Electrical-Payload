@@ -32,7 +32,6 @@ class Sensor(ABC):
 
     def _send_meta_thread(self):
         payload = json.dumps({"meta": self._get_sensor_metadata()})
-        self._logger.info("Star")
         while True:
             self._client.publish(self._get_sensor_topic(), payload, retain=True)
             time.sleep(META_TRANSMIT_INTERVAL)
