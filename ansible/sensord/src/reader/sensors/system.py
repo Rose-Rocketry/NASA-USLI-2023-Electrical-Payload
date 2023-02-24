@@ -2,7 +2,6 @@ from .sensor import PollingSensor
 from pathlib import Path
 import psutil
 import paho.mqtt.client as mqtt
-from humanize import naturalsize
 
 
 class SystemSensor(PollingSensor):
@@ -40,12 +39,9 @@ class SystemSensor(PollingSensor):
                 },
                 {
                     "key": "mem_usage",
-                    "name": "Memory Usage",
+                    "name": f"Memory and Swap Usage",
                     "type": "vector",
-                    "components": (
-                        f"memory ({naturalsize(psutil.virtual_memory().total, True)})",
-                        f"swap ({naturalsize(psutil.swap_memory().total, True)})",
-                    ),
+                    "components": ("memory", "swap"),
                     "unit": "%",
                     "minimum": 0,
                     "maximum": 100,
