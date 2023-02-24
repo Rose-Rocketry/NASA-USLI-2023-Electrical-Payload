@@ -51,12 +51,13 @@
     - name: Enable services
       ansible.builtin.systemd:
         name: buzzer-boot
+        state: started
         daemon_reload: true
         enabled: true
 
   handlers:
     - name: Restart services
       ansible.builtin.systemd:
-        name: buzzer
+        name: buzzer-boot
         daemon_reload: true
         state: restarted
