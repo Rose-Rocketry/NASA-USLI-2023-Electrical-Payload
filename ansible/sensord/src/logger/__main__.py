@@ -4,7 +4,6 @@ import logging
 import humanize
 import paho.mqtt.client as mqtt
 import json
-import json
 
 
 def get_with_suffix(path: Path) -> Path:
