@@ -1,7 +1,10 @@
 from pathlib import PosixPath as Path
+import math
 
 SERVO_UPDATE_FREQ = 50  # Standard value for servos, increasing may damage them
 SERVO_PWM_PERIOD = int(1e9 / SERVO_UPDATE_FREQ)
+SERVO_PWM_PERIOD_MIN = SERVO_PWM_PERIOD * 0.99 # There is some amount of error, the chip can't represent all frequencies exactly
+SERVO_PWM_PERIOD_MAX = SERVO_PWM_PERIOD * 1.01
 
 PWM_CHIP_ID = 0
 
@@ -14,55 +17,40 @@ class PWMPort:
     def __init__(self, pin_num: int) -> None:
         self.pin_num = pin_num
         self.path = PWM_CHIP_PATH / f"pwm{self.pin_num}"
+
+        if self.path.exists():
+            with open(PWM_CHIP_PATH_UNEXPORT, "w") as f_export:
+                print(self.pin_num, file=f_export)
+        with open(PWM_CHIP_PATH_EXPORT, "w") as f_export:
+            print(self.pin_num, file=f_export)
         
         assert self.path.exists(), f"PWM Port {pin_num} not found"
 
         with open(self.path / "period", "r") as f_period:
             self.period = int(f_period.read())
 
-    def __enter__(self):
-        self.open()
-        return self
 
-    def __exit__(self, exc_type, exc_value, tb):
-        self.close()
-        return False
-
-    def open(self):
-        if self.path.exists():
-            self.close()
-
-        with open(PWM_CHIP_PATH_EXPORT, "w") as f_export:
-            print(self.pin_num, file=f_export)
-
-        assert self.path.exists()
-
+        self._duty_cycle_f = open(self.path / "duty_cycle", "wb", buffering=0) 
         self.set_on_time(0)
-
-    def close(self):
-        self.stop()
-
-        with open(PWM_CHIP_PATH_UNEXPORT, "w") as f_unexport:
-            print(self.pin_num, file=f_unexport)
 
     def set_on_time(self, on_time_ms):
         duty_cycle = int(on_time_ms * 1e6)
 
-        with open(self.path / "duty_cycle", "w") as f_duty_cycle:
-            print(duty_cycle, file=f_duty_cycle)
+        self._duty_cycle_f.seek(0)
+        self._duty_cycle_f.write((str(duty_cycle) + "\n").encode())
 
     def set_on_frac(self, frac):
         duty_cycle = int(frac * self.period)
 
-        with open(self.path / "duty_cycle", "w") as f_duty_cycle:
-            print(duty_cycle, file=f_duty_cycle)
+        self._duty_cycle_f.seek(0)
+        self._duty_cycle_f.write((str(duty_cycle) + "\n").encode())
 
 class Servo(PWMPort):
     def __init__(self, pin_num: int, inverted: bool = False) -> None:
         super().__init__(pin_num)
         self.inverted = inverted
 
-        assert self.period == SERVO_PWM_PERIOD, f"Unexpected period, check your device tree! {self.period}ns found, expected {SERVO_PWM_PERIOD}ns"
+        assert SERVO_PWM_PERIOD_MIN <= self.period <= SERVO_PWM_PERIOD_MAX, f"Unexpected period, check your device tree! {self.period}ns found, expected {SERVO_PWM_PERIOD}ns"
 
     def set_power(self, power):
         """
@@ -87,24 +75,8 @@ class Servo(PWMPort):
 
 
 class ServoGroup:
-    def __init__(self, servos: tuple[Servo]):
+    def __init__(self, *servos: tuple[Servo]):
         self._servos = servos
-
-    def __enter__(self):
-        self.open()
-        return self
-
-    def __exit__(self, exc_type, exc_value, tb):
-        self.close()
-        return False
-
-    def open(self):
-        for servo in self._servos:
-            servo.open()
-
-    def close(self):
-        for servo in self._servos:
-            servo.close()
 
     def set_power(self, power):
         for servo in self._servos:
