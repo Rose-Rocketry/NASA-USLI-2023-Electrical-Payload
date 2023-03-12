@@ -87,6 +87,12 @@ class RocketStateMachine(state_machine.StateMachine):
             self.emit_state_change(state)
 
         if state == States.LAUNCHPAD:
+            """
+                Waiting on launch pad.
+                Listens to altimeter for a rise in 500m (is it meters?)
+                Next State: FLYING
+                Prev State: None.
+            """
             if isinstance(event, state_machine.EventAltitude):
                 self.logger.info("Waiting for launch")
                 if self.initial_alt == None:
@@ -95,7 +101,14 @@ class RocketStateMachine(state_machine.StateMachine):
                 if event.altitude > (self.initial_alt + LAUNCH_DETECT_ALTITUDE_DELTA):
                     self.logger.info(f"Launch detected at t={event.timestamp}, altitude={event.altitude}, initial_alt={self.initial_alt}")
                     self.set_state(States.FLYING)
+
         elif state == States.FLYING:
+            """
+                In-Flight state.
+                Listens to altimeter for a rise in 500m (is it meters?)
+                Next State: DEPLOY_LEGS
+                Prev State: None.
+            """
             if isinstance(event, state_machine.EventStateChange):
                 self.logger.info("Waiting for landing")
                 self.stable_since = None
@@ -131,6 +144,7 @@ class RocketStateMachine(state_machine.StateMachine):
                 if stable and min_time_passed:
                     self.logger.info(f"Landing detected at t={event.timestamp}, rate_of_change={rate_of_change}")
                     self.get_state(States.DEPLOY_LEGS)
+
         elif state == States.DEPLOY_LEGS:
             if isinstance(event, state_machine.EventStateChange):
                 self.logger.info("Deploying legs")
@@ -139,9 +153,11 @@ class RocketStateMachine(state_machine.StateMachine):
             if self.last_state_change_elapsed > DEPLOY_LEGS_DURATION:
                 DEPLOY_LEGS_CHANNEL.set_on_frac(0)
                 self.set_state(States.DEPLOY_LEGS_WAIT)
+
         elif state == States.DEPLOY_LEGS_WAIT:
             if self.last_state_change_elapsed > DEPLOY_LEGS_WAIT:
                 self.set_state(States.ORIENT_STAGE1)
+
         elif state == States.ORIENT_STAGE1:
                 if isinstance(event, state_machine.EventIMU):
                     angle = vector.get_angle(event.gravity, VECTOR_DOWN, VECTOR_SIDE)
@@ -151,6 +167,7 @@ class RocketStateMachine(state_machine.StateMachine):
                         ORIENT_SERVO.set_power(power)
                     else:
                         self.set_state(States.ORIENT_STAGE2)
+
         elif state == States.ORIENT_STAGE2:
                 if isinstance(event, state_machine.EventIMU):
                     angle = vector.get_angle(event.gravity, VECTOR_DOWN, VECTOR_SIDE)
@@ -164,6 +181,7 @@ class RocketStateMachine(state_machine.StateMachine):
                         ORIENT_SERVO.stop()
                         self.logger.info(f"Orient final angle: {math.degrees(angle)}")
                         self.set_state(States.DEPLOY_DOOR)
+
         elif state == States.DEPLOY_DOOR:
             if isinstance(event, state_machine.EventStateChange):
                 self.logger.info(f"Deploying Door")
@@ -172,9 +190,11 @@ class RocketStateMachine(state_machine.StateMachine):
             if self.last_state_change_elapsed > DEPLOY_DOOR_DURATION:
                 DEPLOY_DOOR_SERVO.stop()
                 self.set_state(States.DEPLOY_DOOR_WAIT)
+
         elif state == States.DEPLOY_DOOR_WAIT:
             if self.last_state_change_elapsed > DEPLOY_DOOR_WAIT:
                 self.set_state(States.DEPLOY_ARM)
+
         elif state == States.DEPLOY_ARM:
             if isinstance(event, state_machine.EventStateChange):
                 self.logger.info(f"Deploying Arm")
@@ -193,8 +213,10 @@ class RocketStateMachine(state_machine.StateMachine):
             if self.last_state_change_elapsed > DEPLOY_ARM_WAIT:
                 DEPLOY_ARM_SERVO.stop()
                 self.set_state(States.DONE)
+
         elif state == States.DONE:
             pass
+
         else:
             raise RuntimeError(f"Unknown State {state}")
 
@@ -223,8 +245,10 @@ def on_mqtt_message(client: mqtt.Client, sm: RocketStateMachine, message: mqtt.M
 
 if __name__ == "__main__":
     sm = RocketStateMachine()
+
     def emit_state_change(state):
         client.publish(TOPIC_STATE_CURRENT, int(state))
+
     sm.emit_state_change = emit_state_change
 
     client = mqtt.Client("state-machine", clean_session=True, userdata=sm)
