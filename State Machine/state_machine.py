@@ -25,7 +25,19 @@ class EventIMU(Event):
         assert isinstance(self.timestamp, Number)
         assert len(self.gravity) == 3
 
-# Emit
+class EventAPRSPacket(Event):
+    source: str
+    dest: str
+    info: str
+
+    def __init__(self, data: dict) -> None:
+        self.source = data["source"]
+        self.dest = data["dest"]
+        self.info = data["info"]
+        assert isinstance(self.source, str)
+        assert isinstance(self.dest, str)
+        assert isinstance(self.info, str)
+
 class EventStateChange(Event):
     pass
 

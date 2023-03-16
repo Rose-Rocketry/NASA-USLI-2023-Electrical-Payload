@@ -1,5 +1,4 @@
 from pathlib import PosixPath as Path
-import math
 
 SERVO_UPDATE_FREQ = 50  # Standard value for servos, increasing may damage them
 SERVO_PWM_PERIOD = int(1e9 / SERVO_UPDATE_FREQ)

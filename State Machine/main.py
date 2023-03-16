@@ -6,7 +6,7 @@ import math
 import state_machine
 import vector
 from pwm_device import Servo, ServoGroup, PWMPort
-from typing import Callable
+from typing import Callable, Optional
 from collections import deque
 from numbers import Number
 
@@ -29,6 +29,8 @@ class States(enum.IntEnum):
     DEPLOY_DOOR_WAIT = enum.auto()
     DEPLOY_ARM = enum.auto()
     DEPLOY_ARM_WAIT = enum.auto()
+    APRS_LISTEN = enum.auto()
+    EXECUTE_COMMANDS = enum.auto()
     DONE = enum.auto()
 
 
@@ -64,11 +66,16 @@ DEPLOY_ARM_ANGLE_DEPLOY = -90
 DEPLOY_ARM_DURATION = 2
 DEPLOY_ARM_WAIT = 2
 
+# APRS
+APRS_CALLSIGN = "KQ4CTL"
+
+
 class RocketStateMachine(state_machine.StateMachine):
     initial_alt: Number
     stable_since: Number
     stable_deque: deque[state_machine.EventAltitude]
     emit_state_change: Callable[[States], None]
+    last_received_commands: Optional[list[str]]
 
     def __init__(self) -> None:
         super().__init__(MIN_UPDATE_RATE)
@@ -77,6 +84,7 @@ class RocketStateMachine(state_machine.StateMachine):
         self.stable_since = None
         self.stable_deque = None
         self.emit_state_change = None
+        self.last_received_commands = None
 
     def handle_event(self, event: state_machine.Event):
         super().handle_event(event)
@@ -214,6 +222,40 @@ class RocketStateMachine(state_machine.StateMachine):
                 DEPLOY_ARM_SERVO.stop()
                 self.set_state(States.DONE)
 
+        elif state == States.APRS_LISTEN:
+            if not isinstance(event, state_machine.EventAPRSPacket):
+                return
+            
+            self.logger.info(f"APRS Packet received: {event.source}>{event.dest}:{event.info}")
+
+            if event.dest != APRS_CALLSIGN:
+                self.logger.warn(f"APRS packet not for {APRS_CALLSIGN}, ignoring")
+                return
+            
+            try:
+                commands = parse_aprs_commands(event.info)
+
+                if len(commands) > 0:
+                    if self.last_received_commands != None:
+                        if self.last_received_commands == commands:
+                            self.logger.info("Two matching packets received, executing")
+                            self.set_state(States.EXECUTE_COMMANDS)
+                        else:
+                            self.logger.warn("Two packets had differing commands, ignoring")
+                else:
+                    self.logger.error("No valid commands found in APRS packet")
+                
+                self.last_received_commands = commands
+            except Exception as e:
+                self.logger.error("Error parsing APRS packet", exc_info=e)
+        
+        elif state == States.EXECUTE_COMMANDS:
+            self.logger.info(f"Executing commands {self.last_received_commands}")
+
+            # TODO: Actually execute the commands
+
+            self.set_state(States.DONE)
+
         elif state == States.DONE:
             pass
 
@@ -242,6 +284,8 @@ def on_mqtt_message(client: mqtt.Client, sm: RocketStateMachine, message: mqtt.M
                 sm.handle_event(state_machine.EventAltitude(data))
             elif id == "bno055":
                 sm.handle_event(state_machine.EventIMU(data))
+            elif id == "aprs_packets":
+                sm.handle_event(state_machine.EventAPRSPacket(data))
 
 if __name__ == "__main__":
     sm = RocketStateMachine()
