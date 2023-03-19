@@ -3,9 +3,8 @@ import paho.mqtt.client as mqtt
 import logging
 import enum
 import math
-import state_machine
-import vector
-from pwm_device import Servo, ServoGroup, PWMPort
+from . import state_machine, vector
+from .pwm_device import Servo, ServoGroup, PWMPort
 from typing import Callable, Optional
 from collections import deque
 from numbers import Number
@@ -306,6 +305,6 @@ if __name__ == "__main__":
     client.connect("127.0.0.1")
     client.loop_start()
 
-    client.publish(TOPIC_STATE_ALL, "\n".join((repr(a) for a in list(States))))
+    client.publish(TOPIC_STATE_ALL, "\n".join((repr(a) for a in list(States))), retain=True, qos=1)
 
     sm.run(States.DONE)
