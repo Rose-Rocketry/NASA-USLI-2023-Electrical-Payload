@@ -3,10 +3,9 @@ import paho.mqtt.client as mqtt
 import logging
 import enum
 import math
-import state_machine
-import vector
-from pwm_device import Servo, ServoGroup, PWMPort
-from typing import Callable
+from . import state_machine, vector
+from .pwm_device import Servo, ServoGroup, PWMPort
+from typing import Callable, Optional
 from collections import deque
 from numbers import Number
 
@@ -19,8 +18,15 @@ TOPIC_STATE_SET = "state_machine/state/set"
 MIN_UPDATE_RATE = 20
 
 class States(enum.IntEnum):
+    SETUP_OPEN_DOOR_HOLD = enum.auto()
+    SETUP_OPEN_CLOSE_DOOR = enum.auto()
+    SETUP_CLOSE_DOOR = enum.auto()
+    SETUP_CHUTE_OPEN = enum.auto()
+    SETUP_CHUTE_CLOSE = enum.auto()
     LAUNCHPAD = enum.auto()
     FLYING = enum.auto()
+    DEPLOY_CHUTE = enum.auto()
+    DEPLOY_CHUTE_WAIT = enum.auto()
     DEPLOY_LEGS = enum.auto()
     DEPLOY_LEGS_WAIT = enum.auto()
     ORIENT_STAGE1 = enum.auto()
@@ -29,7 +35,10 @@ class States(enum.IntEnum):
     DEPLOY_DOOR_WAIT = enum.auto()
     DEPLOY_ARM = enum.auto()
     DEPLOY_ARM_WAIT = enum.auto()
+    APRS_LISTEN = enum.auto()
+    EXECUTE_COMMANDS = enum.auto()
     DONE = enum.auto()
+    KILL = enum.auto()
 
 
 # Launch and Landing Detection
@@ -42,33 +51,54 @@ FLYING_STABLE_MAX_SPEED = 2
 # Self-orientation
 VECTOR_DOWN = (-1, 0, 0)
 VECTOR_SIDE = (0, 1, 0)
-ORIENT_SERVO = ServoGroup(Servo(0), Servo(1, inverted=True))
+ORIENT_SERVO = ServoGroup(Servo(4), Servo(10, inverted=True))
 ORIENT_STAGE1_POWER = 1
 ORIENT_STAGE1_THRESHOLD = math.radians(90)
-ORIENT_STAGE2_P = 0.25
-ORIENT_STAGE2_K = 0.25
+ORIENT_STAGE2_P = 0.5
+ORIENT_STAGE2_K = 0.5
 ORIENT_STAGE2_THRESHOLD = math.radians(1)
 
 # Deployment
-DEPLOY_LEGS_CHANNEL = PWMPort(15)
+DEPLOY_CHUTE_SERVO = Servo(8)
+DEPLOY_CHUTE_ANGLE_OPEN = -90
+DEPLOY_CHUTE_ANGLE_CLOSE = 90
+DEPLOY_CHUTE_DURATION = 3
+DEPLOY_CHUTE_WAIT = 3
+DEPLOY_LEGS_CHANNEL_A = PWMPort(14)
+DEPLOY_LEGS_CHANNEL_B = PWMPort(15)
 DEPLOY_LEGS_POWER = 0.25
 DEPLOY_LEGS_DURATION = 5  # On time of burn wire
 DEPLOY_LEGS_WAIT = 5  # How long to wait after deploying to start orienting
-DEPLOY_DOOR_SERVO = ServoGroup(Servo(3), Servo(4, inverted=True))
+DEPLOY_DOOR_SERVO = ServoGroup(Servo(9), Servo(5))
 DEPLOY_DOOR_POWER = 1
 DEPLOY_DOOR_DURATION = 3
 DEPLOY_DOOR_WAIT = 2
-DEPLOY_ARM_SERVO = Servo(2)
+DEPLOY_ARM_SERVO = Servo(6)
 DEPLOY_ARM_ANGLE_STOW = 90
-DEPLOY_ARM_ANGLE_DEPLOY = -90
-DEPLOY_ARM_DURATION = 2
+DEPLOY_ARM_ANGLE_DEPLOY = -15
+DEPLOY_ARM_DURATION = 4
 DEPLOY_ARM_WAIT = 2
+
+# APRS
+APRS_CALLSIGN = "KQ4CTL"
+
+
+CLOSE_ON_EXIT = [
+    DEPLOY_CHUTE_SERVO,
+    ORIENT_SERVO,
+    DEPLOY_LEGS_CHANNEL_A,
+    DEPLOY_LEGS_CHANNEL_B,
+    DEPLOY_DOOR_SERVO,
+    DEPLOY_ARM_SERVO
+]
+
 
 class RocketStateMachine(state_machine.StateMachine):
     initial_alt: Number
     stable_since: Number
     stable_deque: deque[state_machine.EventAltitude]
     emit_state_change: Callable[[States], None]
+    last_received_commands: Optional[list[str]]
 
     def __init__(self) -> None:
         super().__init__(MIN_UPDATE_RATE)
@@ -77,16 +107,63 @@ class RocketStateMachine(state_machine.StateMachine):
         self.stable_since = None
         self.stable_deque = None
         self.emit_state_change = None
+        self.last_received_commands = None
 
-    def handle_event(self, event: state_machine.Event):
-        super().handle_event(event)
-
+    def handle_event_impl(self, event: state_machine.Event):
         state = self.get_state()
 
         if isinstance(event, state_machine.EventStateChange):
             self.emit_state_change(state)
 
-        if state == States.LAUNCHPAD:
+        if state == States.SETUP_OPEN_DOOR_HOLD or state == States.SETUP_OPEN_CLOSE_DOOR:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info(f"Setup: Opening Door")
+                DEPLOY_DOOR_SERVO.set_power(DEPLOY_DOOR_POWER)
+
+            if self.last_state_change_elapsed > 5:
+                if state == States.SETUP_OPEN_DOOR_HOLD:
+                    DEPLOY_DOOR_SERVO.stop()
+                    self.set_state(States.DONE)
+                else:
+                    self.set_state(States.SETUP_CLOSE_DOOR)
+
+        elif state == States.SETUP_CLOSE_DOOR:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info(f"Setup: Closing Door")
+                DEPLOY_DOOR_SERVO.set_power(-DEPLOY_DOOR_POWER)
+
+            if self.last_state_change_elapsed > 0.5:
+                DEPLOY_DOOR_SERVO.stop()
+                self.set_state(States.DONE)
+
+        elif state == States.SETUP_CHUTE_OPEN:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info(f"Setup: Opening Chute")
+                DEPLOY_CHUTE_SERVO.set_power(DEPLOY_CHUTE_ANGLE_OPEN)
+
+            if self.last_state_change_elapsed > DEPLOY_CHUTE_DURATION:
+                DEPLOY_CHUTE_SERVO.stop()
+                self.set_state(States.DONE)
+
+        elif state == States.SETUP_CHUTE_CLOSE:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info(f"Setup: Closing Chute")
+                DEPLOY_CHUTE_SERVO.set_power(DEPLOY_CHUTE_ANGLE_CLOSE)
+
+            if self.last_state_change_elapsed > DEPLOY_CHUTE_DURATION:
+                DEPLOY_CHUTE_SERVO.stop()
+                self.set_state(States.DONE)
+
+        elif state == States.SETUP_CLOSE_DOOR:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info(f"Closing Door")
+                DEPLOY_DOOR_SERVO.set_power(-DEPLOY_DOOR_POWER)
+
+            if self.last_state_change_elapsed > 0.5:
+                DEPLOY_DOOR_SERVO.stop()
+                self.set_state(States.DONE)
+
+        elif state == States.LAUNCHPAD:
             """
                 Waiting on launch pad.
                 Listens to altimeter for a rise in 500m (is it meters?)
@@ -143,15 +220,30 @@ class RocketStateMachine(state_machine.StateMachine):
 
                 if stable and min_time_passed:
                     self.logger.info(f"Landing detected at t={event.timestamp}, rate_of_change={rate_of_change}")
-                    self.get_state(States.DEPLOY_LEGS)
+                    self.get_state(States.DEPLOY_CHUTE)
+
+        elif state == States.DEPLOY_CHUTE:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info("Deploying chute")
+                DEPLOY_CHUTE_SERVO.set_angle(DEPLOY_CHUTE_ANGLE_OPEN)
+
+            if self.last_state_change_elapsed > DEPLOY_CHUTE_DURATION:
+                DEPLOY_CHUTE_SERVO.stop()
+                self.set_state(States.DEPLOY_CHUTE_WAIT)
+
+        elif state == States.DEPLOY_CHUTE_WAIT:
+            if self.last_state_change_elapsed > DEPLOY_CHUTE_WAIT:
+                self.set_state(States.DEPLOY_LEGS)
 
         elif state == States.DEPLOY_LEGS:
             if isinstance(event, state_machine.EventStateChange):
                 self.logger.info("Deploying legs")
-                DEPLOY_LEGS_CHANNEL.set_on_frac(DEPLOY_LEGS_POWER)
+                DEPLOY_LEGS_CHANNEL_A.set_on_frac(DEPLOY_LEGS_POWER)
+                DEPLOY_LEGS_CHANNEL_B.set_on_frac(DEPLOY_LEGS_POWER)
 
             if self.last_state_change_elapsed > DEPLOY_LEGS_DURATION:
-                DEPLOY_LEGS_CHANNEL.set_on_frac(0)
+                DEPLOY_LEGS_CHANNEL_A.set_on_frac(0)
+                DEPLOY_LEGS_CHANNEL_B.set_on_frac(0)
                 self.set_state(States.DEPLOY_LEGS_WAIT)
 
         elif state == States.DEPLOY_LEGS_WAIT:
@@ -212,13 +304,54 @@ class RocketStateMachine(state_machine.StateMachine):
 
             if self.last_state_change_elapsed > DEPLOY_ARM_WAIT:
                 DEPLOY_ARM_SERVO.stop()
-                self.set_state(States.DONE)
+                self.set_state(States.APRS_LISTEN)
+
+        elif state == States.APRS_LISTEN:
+            if not isinstance(event, state_machine.EventAPRSPacket):
+                return
+            
+            self.logger.info(f"APRS Packet received: {event.source}>{event.dest}:{event.info}")
+
+            if event.dest != APRS_CALLSIGN:
+                self.logger.warn(f"APRS packet not for {APRS_CALLSIGN}, ignoring")
+                return
+            
+            try:
+                commands = self._parse_aprs_commands(event.info)
+
+                if len(commands) > 0:
+                    if self.last_received_commands != None:
+                        if self.last_received_commands == commands:
+                            self.logger.info("Two matching packets received, executing")
+                            self.set_state(States.EXECUTE_COMMANDS)
+                        else:
+                            self.logger.warn("Two packets had differing commands, ignoring")
+                else:
+                    self.logger.error("No valid commands found in APRS packet")
+                
+                self.last_received_commands = commands
+            except Exception as e:
+                self.logger.error("Error parsing APRS packet", exc_info=e)
+        
+        elif state == States.EXECUTE_COMMANDS:
+            self.logger.info(f"Executing commands {self.last_received_commands}")
+
+            # TODO: Actually execute the commands
+
+            self.set_state(States.DONE)
 
         elif state == States.DONE:
             pass
 
+        elif state == States.KILL:
+            raise InterruptedError("Kill requested")
+
         else:
             raise RuntimeError(f"Unknown State {state}")
+
+    def _parse_aprs_commands(self, info):
+        # TODO: Actually Parse
+        return [info]
 
 
 
@@ -242,22 +375,31 @@ def on_mqtt_message(client: mqtt.Client, sm: RocketStateMachine, message: mqtt.M
                 sm.handle_event(state_machine.EventAltitude(data))
             elif id == "bno055":
                 sm.handle_event(state_machine.EventIMU(data))
+            elif id == "aprs_packets":
+                sm.handle_event(state_machine.EventAPRSPacket(data))
 
 if __name__ == "__main__":
-    sm = RocketStateMachine()
+    try:
+        sm = RocketStateMachine()
 
-    def emit_state_change(state):
-        client.publish(TOPIC_STATE_CURRENT, int(state))
+        def emit_state_change(state):
+            client.publish(TOPIC_STATE_CURRENT, int(state))
 
-    sm.emit_state_change = emit_state_change
+        sm.emit_state_change = emit_state_change
 
-    client = mqtt.Client("state-machine", clean_session=True, userdata=sm)
-    client.on_connect = on_mqtt_connect
-    client.on_message = on_mqtt_message
-    client.enable_logger()
-    client.connect("127.0.0.1")
-    client.loop_start()
+        client = mqtt.Client("state-machine", clean_session=True, userdata=sm)
+        client.on_connect = on_mqtt_connect
+        client.on_message = on_mqtt_message
+        client.enable_logger()
+        client.connect("127.0.0.1")
+        client.loop_start()
 
-    client.publish(TOPIC_STATE_ALL, "\n".join((repr(a) for a in list(States))))
+        client.publish(TOPIC_STATE_ALL, "\n".join((repr(a) for a in list(States))), retain=True, qos=1)
 
-    sm.run(States.DONE)
+        sm.run(States.LAUNCHPAD)
+    finally:
+        for pwm_device in CLOSE_ON_EXIT:
+            try:
+                pwm_device.close()
+            except Exception as e:
+                print(f"Error closing pwm device {pwm_device.path}: {e}")

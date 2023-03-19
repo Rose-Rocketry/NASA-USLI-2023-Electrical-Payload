@@ -11,6 +11,7 @@
       - sensor-reader@mcp3004.service
       - sensor-reader@kiss.service
       - sensor-logger.service
+      - state-machine.service
   gather_facts: false
   become: true
   tasks:
@@ -52,6 +53,13 @@
     - name: Copy sensor-logger.service
       ansible.builtin.copy:
         src: sensor-logger.service
+        dest: /etc/systemd/system
+        owner: root
+        mode: 0644
+      notify: Restart services
+    - name: Copy state-machine.service
+      ansible.builtin.copy:
+        src: state-machine.service
         dest: /etc/systemd/system
         owner: root
         mode: 0644

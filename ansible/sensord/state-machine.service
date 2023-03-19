@@ -1,0 +1,11 @@
+[Unit]
+Description=Main State Machine
+
+[Service]
+Restart=always
+RestartSec=10
+WorkingDirectory=/opt
+ExecStart=/opt/sensord_venv/bin/python -m sensord.state_machine
+
+[Install]
+WantedBy=multi-user.target
