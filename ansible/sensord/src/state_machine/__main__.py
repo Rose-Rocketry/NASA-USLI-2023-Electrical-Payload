@@ -5,6 +5,7 @@ import enum
 import math
 from . import state_machine, vector
 from .pwm_device import Servo, ServoGroup, PWMPort
+from .parser import parse_aprs_commands
 from typing import Callable, Optional
 from collections import deque
 from numbers import Number
@@ -320,7 +321,7 @@ class RocketStateMachine(state_machine.StateMachine):
                 return
             
             try:
-                commands = self._parse_aprs_commands(event.info)
+                commands = parse_aprs_commands(event.info)
 
                 if len(commands) > 0:
                     if self.last_received_commands != None:
@@ -351,11 +352,6 @@ class RocketStateMachine(state_machine.StateMachine):
 
         else:
             raise RuntimeError(f"Unknown State {state}")
-
-    def _parse_aprs_commands(self, info):
-        # TODO: Actually Parse
-        return [info]
-
 
 
 def on_mqtt_connect(client: mqtt.Client, _, flags, rc):
