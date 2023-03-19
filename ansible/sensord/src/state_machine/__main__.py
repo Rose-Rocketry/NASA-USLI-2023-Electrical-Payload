@@ -21,8 +21,12 @@ class States(enum.IntEnum):
     SETUP_OPEN_DOOR_HOLD = enum.auto()
     SETUP_OPEN_CLOSE_DOOR = enum.auto()
     SETUP_CLOSE_DOOR = enum.auto()
+    SETUP_CHUTE_OPEN = enum.auto()
+    SETUP_CHUTE_CLOSE = enum.auto()
     LAUNCHPAD = enum.auto()
     FLYING = enum.auto()
+    DEPLOY_CHUTE = enum.auto()
+    DEPLOY_CHUTE_WAIT = enum.auto()
     DEPLOY_LEGS = enum.auto()
     DEPLOY_LEGS_WAIT = enum.auto()
     ORIENT_STAGE1 = enum.auto()
@@ -55,6 +59,11 @@ ORIENT_STAGE2_K = 0.5
 ORIENT_STAGE2_THRESHOLD = math.radians(1)
 
 # Deployment
+DEPLOY_CHUTE_SERVO = Servo(8)
+DEPLOY_CHUTE_ANGLE_OPEN = -90
+DEPLOY_CHUTE_ANGLE_CLOSE = 90
+DEPLOY_CHUTE_DURATION = 3
+DEPLOY_CHUTE_WAIT = 3
 DEPLOY_LEGS_CHANNEL = PWMPort(15)
 DEPLOY_LEGS_POWER = 0.25
 DEPLOY_LEGS_DURATION = 5  # On time of burn wire
@@ -105,7 +114,7 @@ class RocketStateMachine(state_machine.StateMachine):
 
         if state == States.SETUP_OPEN_DOOR_HOLD or state == States.SETUP_OPEN_CLOSE_DOOR:
             if isinstance(event, state_machine.EventStateChange):
-                self.logger.info(f"Opening Door")
+                self.logger.info(f"Setup: Opening Door")
                 DEPLOY_DOOR_SERVO.set_power(DEPLOY_DOOR_POWER)
 
             if self.last_state_change_elapsed > 5:
@@ -114,6 +123,33 @@ class RocketStateMachine(state_machine.StateMachine):
                     self.set_state(States.DONE)
                 else:
                     self.set_state(States.SETUP_CLOSE_DOOR)
+
+        elif state == States.SETUP_CLOSE_DOOR:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info(f"Setup: Closing Door")
+                DEPLOY_DOOR_SERVO.set_power(-DEPLOY_DOOR_POWER)
+
+            if self.last_state_change_elapsed > 0.5:
+                DEPLOY_DOOR_SERVO.stop()
+                self.set_state(States.DONE)
+
+        elif state == States.SETUP_CHUTE_OPEN:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info(f"Setup: Opening Chute")
+                DEPLOY_CHUTE_SERVO.set_power(DEPLOY_CHUTE_ANGLE_OPEN)
+
+            if self.last_state_change_elapsed > DEPLOY_CHUTE_DURATION:
+                DEPLOY_CHUTE_SERVO.stop()
+                self.set_state(States.DONE)
+
+        elif state == States.SETUP_CHUTE_CLOSE:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info(f"Setup: Closing Chute")
+                DEPLOY_CHUTE_SERVO.set_power(DEPLOY_CHUTE_ANGLE_CLOSE)
+
+            if self.last_state_change_elapsed > DEPLOY_CHUTE_DURATION:
+                DEPLOY_CHUTE_SERVO.stop()
+                self.set_state(States.DONE)
 
         elif state == States.SETUP_CLOSE_DOOR:
             if isinstance(event, state_machine.EventStateChange):
@@ -181,7 +217,20 @@ class RocketStateMachine(state_machine.StateMachine):
 
                 if stable and min_time_passed:
                     self.logger.info(f"Landing detected at t={event.timestamp}, rate_of_change={rate_of_change}")
-                    self.get_state(States.DEPLOY_LEGS)
+                    self.get_state(States.DEPLOY_CHUTE)
+
+        elif state == States.DEPLOY_CHUTE:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info("Deploying chute")
+                DEPLOY_CHUTE_SERVO.set_angle(DEPLOY_CHUTE_ANGLE_OPEN)
+
+            if self.last_state_change_elapsed > DEPLOY_CHUTE_DURATION:
+                DEPLOY_CHUTE_SERVO.stop()
+                self.set_state(States.DEPLOY_CHUTE_WAIT)
+
+        elif state == States.DEPLOY_CHUTE_WAIT:
+            if self.last_state_change_elapsed > DEPLOY_CHUTE_WAIT:
+                self.set_state(States.DEPLOY_LEGS)
 
         elif state == States.DEPLOY_LEGS:
             if isinstance(event, state_machine.EventStateChange):
