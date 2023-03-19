@@ -18,6 +18,9 @@ TOPIC_STATE_SET = "state_machine/state/set"
 MIN_UPDATE_RATE = 20
 
 class States(enum.IntEnum):
+    SETUP_OPEN_DOOR_HOLD = enum.auto()
+    SETUP_OPEN_CLOSE_DOOR = enum.auto()
+    SETUP_CLOSE_DOOR = enum.auto()
     LAUNCHPAD = enum.auto()
     FLYING = enum.auto()
     DEPLOY_LEGS = enum.auto()
@@ -31,6 +34,7 @@ class States(enum.IntEnum):
     APRS_LISTEN = enum.auto()
     EXECUTE_COMMANDS = enum.auto()
     DONE = enum.auto()
+    KILL = enum.auto()
 
 
 # Launch and Landing Detection
@@ -43,7 +47,7 @@ FLYING_STABLE_MAX_SPEED = 2
 # Self-orientation
 VECTOR_DOWN = (-1, 0, 0)
 VECTOR_SIDE = (0, 1, 0)
-ORIENT_SERVO = ServoGroup(Servo(0), Servo(1, inverted=True))
+ORIENT_SERVO = ServoGroup(Servo(4), Servo(10, inverted=True))
 ORIENT_STAGE1_POWER = 1
 ORIENT_STAGE1_THRESHOLD = math.radians(90)
 ORIENT_STAGE2_P = 0.25
@@ -55,14 +59,14 @@ DEPLOY_LEGS_CHANNEL = PWMPort(15)
 DEPLOY_LEGS_POWER = 0.25
 DEPLOY_LEGS_DURATION = 5  # On time of burn wire
 DEPLOY_LEGS_WAIT = 5  # How long to wait after deploying to start orienting
-DEPLOY_DOOR_SERVO = ServoGroup(Servo(3), Servo(4, inverted=True))
+DEPLOY_DOOR_SERVO = ServoGroup(Servo(9), Servo(5))
 DEPLOY_DOOR_POWER = 1
 DEPLOY_DOOR_DURATION = 3
 DEPLOY_DOOR_WAIT = 2
-DEPLOY_ARM_SERVO = Servo(2)
+DEPLOY_ARM_SERVO = Servo(6)
 DEPLOY_ARM_ANGLE_STOW = 90
-DEPLOY_ARM_ANGLE_DEPLOY = -90
-DEPLOY_ARM_DURATION = 2
+DEPLOY_ARM_ANGLE_DEPLOY = -15
+DEPLOY_ARM_DURATION = 4
 DEPLOY_ARM_WAIT = 2
 
 # APRS
@@ -99,7 +103,28 @@ class RocketStateMachine(state_machine.StateMachine):
         if isinstance(event, state_machine.EventStateChange):
             self.emit_state_change(state)
 
-        if state == States.LAUNCHPAD:
+        if state == States.SETUP_OPEN_DOOR_HOLD or state == States.SETUP_OPEN_CLOSE_DOOR:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info(f"Opening Door")
+                DEPLOY_DOOR_SERVO.set_power(DEPLOY_DOOR_POWER)
+
+            if self.last_state_change_elapsed > 5:
+                if state == States.SETUP_OPEN_DOOR_HOLD:
+                    DEPLOY_DOOR_SERVO.stop()
+                    self.set_state(States.DONE)
+                else:
+                    self.set_state(States.SETUP_CLOSE_DOOR)
+
+        elif state == States.SETUP_CLOSE_DOOR:
+            if isinstance(event, state_machine.EventStateChange):
+                self.logger.info(f"Closing Door")
+                DEPLOY_DOOR_SERVO.set_power(-DEPLOY_DOOR_POWER)
+
+            if self.last_state_change_elapsed > 0.5:
+                DEPLOY_DOOR_SERVO.stop()
+                self.set_state(States.DONE)
+
+        elif state == States.LAUNCHPAD:
             """
                 Waiting on launch pad.
                 Listens to altimeter for a rise in 500m (is it meters?)
@@ -225,7 +250,7 @@ class RocketStateMachine(state_machine.StateMachine):
 
             if self.last_state_change_elapsed > DEPLOY_ARM_WAIT:
                 DEPLOY_ARM_SERVO.stop()
-                self.set_state(States.DONE)
+                self.set_state(States.APRS_LISTEN)
 
         elif state == States.APRS_LISTEN:
             if not isinstance(event, state_machine.EventAPRSPacket):
@@ -263,6 +288,9 @@ class RocketStateMachine(state_machine.StateMachine):
 
         elif state == States.DONE:
             pass
+
+        elif state == States.KILL:
+            raise InterruptedError("Kill requested")
 
         else:
             raise RuntimeError(f"Unknown State {state}")
