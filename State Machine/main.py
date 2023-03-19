@@ -233,7 +233,7 @@ class RocketStateMachine(state_machine.StateMachine):
                 return
             
             try:
-                commands = parse_aprs_commands(event.info)
+                commands = self._parse_aprs_commands(event.info)
 
                 if len(commands) > 0:
                     if self.last_received_commands != None:
@@ -261,6 +261,10 @@ class RocketStateMachine(state_machine.StateMachine):
 
         else:
             raise RuntimeError(f"Unknown State {state}")
+
+    def _parse_aprs_commands(self, info):
+        # TODO: Actually Parse
+        return [info]
 
 
 
