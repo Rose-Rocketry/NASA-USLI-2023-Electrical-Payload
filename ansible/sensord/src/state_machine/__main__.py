@@ -86,8 +86,6 @@ class RocketStateMachine(state_machine.StateMachine):
         self.last_received_commands = None
 
     def handle_event_impl(self, event: state_machine.Event):
-        super().handle_event(event)
-
         state = self.get_state()
 
         if isinstance(event, state_machine.EventStateChange):
