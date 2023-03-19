@@ -33,16 +33,22 @@ class PWMPort:
         self.set_on_time(0)
 
     def set_on_time(self, on_time_ms):
-        duty_cycle = int(on_time_ms * 1e6)
-
-        self._duty_cycle_f.seek(0)
-        self._duty_cycle_f.write((str(duty_cycle) + "\n").encode())
+        self._set_duty_cycle(on_time_ms * 1e6)
 
     def set_on_frac(self, frac):
-        duty_cycle = int(frac * self.period)
-
+        self._set_duty_cycle(frac * self.period)
+    
+    def _set_duty_cycle(self, duty_cycle):
         self._duty_cycle_f.seek(0)
-        self._duty_cycle_f.write((str(duty_cycle) + "\n").encode())
+        self._duty_cycle_f.write((str(int(duty_cycle)) + "\n").encode())
+
+    def close(self):
+        print(f"Closing PWM {self.path}")
+        self.set_on_time(0)
+        self._duty_cycle_f.close()
+
+        with open(PWM_CHIP_PATH_UNEXPORT, "w") as f_export:
+                print(self.pin_num, file=f_export)
 
 class Servo(PWMPort):
     def __init__(self, pin_num: int, inverted: bool = False) -> None:
@@ -88,3 +94,7 @@ class ServoGroup:
     def stop(self):
         for servo in self._servos:
             servo.stop()
+
+    def close(self):
+        for servo in self._servos:
+            servo.close()
