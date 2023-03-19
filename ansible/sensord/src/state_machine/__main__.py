@@ -396,7 +396,7 @@ if __name__ == "__main__":
 
         client.publish(TOPIC_STATE_ALL, "\n".join((repr(a) for a in list(States))), retain=True, qos=1)
 
-        sm.run(States.DONE)
+        sm.run(States.LAUNCHPAD)
     finally:
         for pwm_device in CLOSE_ON_EXIT:
             try:
