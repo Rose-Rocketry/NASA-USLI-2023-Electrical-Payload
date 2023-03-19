@@ -43,7 +43,7 @@ class PWMPort:
         self._duty_cycle_f.write((str(int(duty_cycle)) + "\n").encode())
 
     def close(self):
-        print(f"Closing PWM {self.path}")
+        print(f"Closing {self.path}")
         self.set_on_time(0)
         self._duty_cycle_f.close()
 

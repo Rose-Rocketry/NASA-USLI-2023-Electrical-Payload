@@ -69,6 +69,14 @@ DEPLOY_ARM_WAIT = 2
 APRS_CALLSIGN = "KQ4CTL"
 
 
+CLOSE_ON_EXIT = [
+    ORIENT_SERVO,
+    DEPLOY_LEGS_CHANNEL,
+    DEPLOY_DOOR_SERVO,
+    DEPLOY_ARM_SERVO
+]
+
+
 class RocketStateMachine(state_machine.StateMachine):
     initial_alt: Number
     stable_since: Number
@@ -289,20 +297,27 @@ def on_mqtt_message(client: mqtt.Client, sm: RocketStateMachine, message: mqtt.M
                 sm.handle_event(state_machine.EventAPRSPacket(data))
 
 if __name__ == "__main__":
-    sm = RocketStateMachine()
+    try:
+        sm = RocketStateMachine()
 
-    def emit_state_change(state):
-        client.publish(TOPIC_STATE_CURRENT, int(state))
+        def emit_state_change(state):
+            client.publish(TOPIC_STATE_CURRENT, int(state))
 
-    sm.emit_state_change = emit_state_change
+        sm.emit_state_change = emit_state_change
 
-    client = mqtt.Client("state-machine", clean_session=True, userdata=sm)
-    client.on_connect = on_mqtt_connect
-    client.on_message = on_mqtt_message
-    client.enable_logger()
-    client.connect("127.0.0.1")
-    client.loop_start()
+        client = mqtt.Client("state-machine", clean_session=True, userdata=sm)
+        client.on_connect = on_mqtt_connect
+        client.on_message = on_mqtt_message
+        client.enable_logger()
+        client.connect("127.0.0.1")
+        client.loop_start()
 
-    client.publish(TOPIC_STATE_ALL, "\n".join((repr(a) for a in list(States))), retain=True, qos=1)
+        client.publish(TOPIC_STATE_ALL, "\n".join((repr(a) for a in list(States))), retain=True, qos=1)
 
-    sm.run(States.DONE)
+        sm.run(States.DONE)
+    finally:
+        for pwm_device in CLOSE_ON_EXIT:
+            try:
+                pwm_device.close()
+            except Exception as e:
+                print(f"Error closing pwm device {pwm_device.path}: {e}")
