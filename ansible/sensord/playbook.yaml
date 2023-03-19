@@ -41,8 +41,22 @@
         checksum: yes
         delete: yes
         recursive: yes
-      notify: Restart services 
-
+      notify: Restart services
+    - name: Get git status
+      ansible.builtin.shell: '(git diff --quiet || echo -n "DIRTY: " && git log --oneline -1)'
+      delegate_to: localhost
+      become: false
+      register: git_status
+      changed_when: false
+    - name: Print git status
+      ansible.builtin.debug:
+        var: git_status.stdout
+    - name: Create git status file
+      ansible.builtin.copy:
+        content: "{{ git_status.stdout }}"
+        dest: /opt/git_status
+        owner: root
+        mode: 0644
     - name: Copy sensor-reader@.service
       ansible.builtin.copy:
         src: sensor-reader@.service

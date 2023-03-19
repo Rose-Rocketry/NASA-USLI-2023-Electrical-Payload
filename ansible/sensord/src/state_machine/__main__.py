@@ -11,6 +11,9 @@ from numbers import Number
 
 logging.basicConfig(level=logging.INFO)
 
+with open("/opt/git_status") as f:
+    GIT_STATUS = f
+
 TOPIC_PREFIX = "sensors/"
 TOPIC_STATE_CURRENT = "state_machine/state/current"
 TOPIC_STATE_ALL = "state_machine/state/all"
@@ -360,11 +363,6 @@ def on_mqtt_connect(client: mqtt.Client, _, flags, rc):
     client.subscribe(TOPIC_PREFIX + "bno055", qos=0)
     client.subscribe(TOPIC_STATE_SET)
 
-    # For reporting the current version of payload code.
-    import subprocess
-    sha = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
-    client.publish(TOPIC_PREFIX + "code_hash", sha, qos=0)
-
 
 def on_mqtt_message(client: mqtt.Client, sm: RocketStateMachine, message: mqtt.MQTTMessage):
     if message.topic == TOPIC_STATE_SET:
@@ -384,6 +382,9 @@ def on_mqtt_message(client: mqtt.Client, sm: RocketStateMachine, message: mqtt.M
                 sm.handle_event(state_machine.EventAPRSPacket(data))
 
 if __name__ == "__main__":
+    print("State machine is starting")
+    print("git status: " + GIT_STATUS)
+
     try:
         sm = RocketStateMachine()
 
