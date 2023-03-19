@@ -64,7 +64,8 @@ DEPLOY_CHUTE_ANGLE_OPEN = -90
 DEPLOY_CHUTE_ANGLE_CLOSE = 90
 DEPLOY_CHUTE_DURATION = 3
 DEPLOY_CHUTE_WAIT = 3
-DEPLOY_LEGS_CHANNEL = PWMPort(15)
+DEPLOY_LEGS_CHANNEL_A = PWMPort(14)
+DEPLOY_LEGS_CHANNEL_B = PWMPort(15)
 DEPLOY_LEGS_POWER = 0.25
 DEPLOY_LEGS_DURATION = 5  # On time of burn wire
 DEPLOY_LEGS_WAIT = 5  # How long to wait after deploying to start orienting
@@ -85,7 +86,8 @@ APRS_CALLSIGN = "KQ4CTL"
 CLOSE_ON_EXIT = [
     DEPLOY_CHUTE_SERVO,
     ORIENT_SERVO,
-    DEPLOY_LEGS_CHANNEL,
+    DEPLOY_LEGS_CHANNEL_A,
+    DEPLOY_LEGS_CHANNEL_B,
     DEPLOY_DOOR_SERVO,
     DEPLOY_ARM_SERVO
 ]
@@ -236,10 +238,12 @@ class RocketStateMachine(state_machine.StateMachine):
         elif state == States.DEPLOY_LEGS:
             if isinstance(event, state_machine.EventStateChange):
                 self.logger.info("Deploying legs")
-                DEPLOY_LEGS_CHANNEL.set_on_frac(DEPLOY_LEGS_POWER)
+                DEPLOY_LEGS_CHANNEL_A.set_on_frac(DEPLOY_LEGS_POWER)
+                DEPLOY_LEGS_CHANNEL_B.set_on_frac(DEPLOY_LEGS_POWER)
 
             if self.last_state_change_elapsed > DEPLOY_LEGS_DURATION:
-                DEPLOY_LEGS_CHANNEL.set_on_frac(0)
+                DEPLOY_LEGS_CHANNEL_A.set_on_frac(0)
+                DEPLOY_LEGS_CHANNEL_B.set_on_frac(0)
                 self.set_state(States.DEPLOY_LEGS_WAIT)
 
         elif state == States.DEPLOY_LEGS_WAIT:
