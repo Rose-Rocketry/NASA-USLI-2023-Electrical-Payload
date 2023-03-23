@@ -57,11 +57,11 @@ FLYING_STABLE_MAX_SPEED = 2
 VECTOR_DOWN = (-1, 0, 0)
 VECTOR_SIDE = (0, 0, 1)
 ORIENT_SERVO = ServoGroup(Servo(4), Servo(10, inverted=True))
-ORIENT_STAGE1_POWER = 1
-ORIENT_STAGE1_THRESHOLD = math.radians(90)
-ORIENT_STAGE2_P = 0.5
-ORIENT_STAGE2_K = 0.6
-ORIENT_STAGE2_THRESHOLD = math.radians(5)
+ORIENT_P = 0.5
+ORIENT_K = 0.6
+ORIENT_THRESHOLD = math.radians(5)
+ORIENT_TIMEOUT = 8
+ORIENT_LOCKOUT = math.radians(50)
 
 # Deployment
 DEPLOY_CHUTE_SERVO = Servo(8)
@@ -260,17 +260,26 @@ class RocketStateMachine(state_machine.StateMachine):
         elif state == States.ORIENT:
                 if isinstance(event, state_machine.EventIMU):
                     angle = vector.get_angle(event.gravity, VECTOR_DOWN, VECTOR_SIDE)
-                    if abs(angle) > ORIENT_STAGE2_THRESHOLD:
-                        power = angle * ORIENT_STAGE2_P + math.copysign(
-                            ORIENT_STAGE2_K, angle
+                    if self.last_state_change_elapsed > ORIENT_TIMEOUT:
+                        if abs(angle) > ORIENT_LOCKOUT:
+                            ORIENT_SERVO.stop()
+                            self.logger.error("Orient lockout violated, aborting mission")
+                            self.set_state(States.DONE)
+                        else:
+                            ORIENT_SERVO.stop()
+                            self.logger.error("Orient timed out, continuing")
+                            self.set_state(States.DEPLOY_DOOR)
+                    elif abs(angle) > ORIENT_THRESHOLD:
+                        power = angle * ORIENT_P + math.copysign(
+                            ORIENT_K, angle
                         )
-                        self.logger.info(f"Orient stage 2, power={power}")
+                        self.logger.info(f"Orient angle={angle}, power={power}")
                         ORIENT_SERVO.set_power(power)
                     else:
                         ORIENT_SERVO.stop()
-                        self.logger.info(f"Orient final angle: {math.degrees(angle)}")
+                        self.logger.error("Orient succeeded")
                         self.set_state(States.DEPLOY_DOOR)
-
+                    
         elif state == States.DEPLOY_DOOR:
             if isinstance(event, state_machine.EventStateChange):
                 self.logger.info(f"Deploying Door")
