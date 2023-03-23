@@ -1,11 +1,7 @@
-groundstation-pi ansible_user=pi xb_device=/dev/ttyUSB0 xb_ip=10.82.104.2/24
 rocket-pi ansible_user=pi ansible_host=10.82.104.3 xb_device=/dev/ttyAMA0 xb_ip=10.82.104.3/24
 
-[groundstation]
-groundstation-pi
 [rocket]
 rocket-pi
 
 [pi]
-groundstation-pi
 rocket-pi
