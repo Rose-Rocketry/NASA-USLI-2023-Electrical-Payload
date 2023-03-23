@@ -13,7 +13,7 @@ from numbers import Number
 logging.basicConfig(level=logging.INFO)
 
 with open("/opt/git_status") as f:
-    GIT_STATUS = f
+    GIT_STATUS = f.read()
 
 TOPIC_PREFIX = "sensors/"
 TOPIC_STATE_CURRENT = "state_machine/state/current"
@@ -174,8 +174,10 @@ class RocketStateMachine(state_machine.StateMachine):
                 Next State: FLYING
                 Prev State: None.
             """
-            if isinstance(event, state_machine.EventAltitude):
+            if isinstance(event, state_machine.EventStateChange):
                 self.logger.info("Waiting for launch")
+
+            if isinstance(event, state_machine.EventAltitude):
                 if self.initial_alt == None:
                     self.initial_alt = event.altitude
 
@@ -385,7 +387,7 @@ if __name__ == "__main__":
         sm = RocketStateMachine()
 
         def emit_state_change(state):
-            client.publish(TOPIC_STATE_CURRENT, int(state))
+            client.publish(TOPIC_STATE_CURRENT, int(state), retain=True)
 
         sm.emit_state_change = emit_state_change
 
@@ -396,7 +398,7 @@ if __name__ == "__main__":
         client.connect("127.0.0.1")
         client.loop_start()
 
-        client.publish(TOPIC_STATE_ALL, "\n".join((repr(a) for a in list(States))), retain=True, qos=1)
+        client.publish(TOPIC_STATE_ALL, "\n".join((repr(a) for a in list(States))), retain=True)
 
         sm.run(States.LAUNCHPAD)
     finally:
