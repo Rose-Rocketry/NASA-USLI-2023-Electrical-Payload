@@ -3,6 +3,7 @@ import paho.mqtt.client as mqtt
 import logging
 import enum
 import math
+import os
 from . import state_machine, vector
 from .pwm_device import Servo, ServoGroup, PWMPort
 from .parser import parse_aprs_commands
@@ -33,8 +34,7 @@ class States(enum.IntEnum):
     DEPLOY_CHUTE_WAIT = enum.auto()
     DEPLOY_LEGS = enum.auto()
     DEPLOY_LEGS_WAIT = enum.auto()
-    ORIENT_STAGE1 = enum.auto()
-    ORIENT_STAGE2 = enum.auto()
+    ORIENT = enum.auto()
     DEPLOY_DOOR = enum.auto()
     DEPLOY_DOOR_WAIT = enum.auto()
     DEPLOY_ARM = enum.auto()
@@ -43,6 +43,7 @@ class States(enum.IntEnum):
     EXECUTE_COMMANDS = enum.auto()
     DONE = enum.auto()
     KILL = enum.auto()
+    SHUTDOWN = enum.auto()
 
 
 # Launch and Landing Detection
@@ -54,13 +55,13 @@ FLYING_STABLE_MAX_SPEED = 2
 
 # Self-orientation
 VECTOR_DOWN = (-1, 0, 0)
-VECTOR_SIDE = (0, 1, 0)
+VECTOR_SIDE = (0, 0, 1)
 ORIENT_SERVO = ServoGroup(Servo(4), Servo(10, inverted=True))
 ORIENT_STAGE1_POWER = 1
 ORIENT_STAGE1_THRESHOLD = math.radians(90)
 ORIENT_STAGE2_P = 0.5
-ORIENT_STAGE2_K = 0.5
-ORIENT_STAGE2_THRESHOLD = math.radians(1)
+ORIENT_STAGE2_K = 0.6
+ORIENT_STAGE2_THRESHOLD = math.radians(5)
 
 # Deployment
 DEPLOY_CHUTE_SERVO = Servo(8)
@@ -70,10 +71,10 @@ DEPLOY_CHUTE_DURATION = 3
 DEPLOY_CHUTE_WAIT = 3
 DEPLOY_LEGS_CHANNEL_A = PWMPort(14)
 DEPLOY_LEGS_CHANNEL_B = PWMPort(15)
-DEPLOY_LEGS_POWER = 0.25
+DEPLOY_LEGS_POWER = 0.5
 DEPLOY_LEGS_DURATION = 5  # On time of burn wire
 DEPLOY_LEGS_WAIT = 5  # How long to wait after deploying to start orienting
-DEPLOY_DOOR_SERVO = ServoGroup(Servo(9), Servo(5))
+DEPLOY_DOOR_SERVO = ServoGroup(Servo(9, inverted=True), Servo(5, inverted=True))
 DEPLOY_DOOR_POWER = 1
 DEPLOY_DOOR_DURATION = 3
 DEPLOY_DOOR_WAIT = 2
@@ -254,19 +255,9 @@ class RocketStateMachine(state_machine.StateMachine):
 
         elif state == States.DEPLOY_LEGS_WAIT:
             if self.last_state_change_elapsed > DEPLOY_LEGS_WAIT:
-                self.set_state(States.ORIENT_STAGE1)
+                self.set_state(States.ORIENT)
 
-        elif state == States.ORIENT_STAGE1:
-                if isinstance(event, state_machine.EventIMU):
-                    angle = vector.get_angle(event.gravity, VECTOR_DOWN, VECTOR_SIDE)
-                    if abs(angle) > ORIENT_STAGE1_THRESHOLD:
-                        power = math.copysign(ORIENT_STAGE1_POWER, angle)
-                        self.logger.info(f"Orient stage 1, power={power}")
-                        ORIENT_SERVO.set_power(power)
-                    else:
-                        self.set_state(States.ORIENT_STAGE2)
-
-        elif state == States.ORIENT_STAGE2:
+        elif state == States.ORIENT:
                 if isinstance(event, state_machine.EventIMU):
                     angle = vector.get_angle(event.gravity, VECTOR_DOWN, VECTOR_SIDE)
                     if abs(angle) > ORIENT_STAGE2_THRESHOLD:
@@ -351,6 +342,10 @@ class RocketStateMachine(state_machine.StateMachine):
 
         elif state == States.KILL:
             raise InterruptedError("Kill requested")
+
+        elif state == States.SHUTDOWN:
+            os.system("shutdown now")
+            raise InterruptedError("Shutdown requested")
 
         else:
             raise RuntimeError(f"Unknown State {state}")
