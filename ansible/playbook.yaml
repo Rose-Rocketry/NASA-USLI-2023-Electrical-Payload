@@ -3,7 +3,7 @@
 
 # Networking
 - ansible.builtin.import_playbook: xbnet/playbook.yaml
-- ansible.builtin.import_playbook: rsmb/playbook.yaml
+- ansible.builtin.import_playbook: mosquitto/playbook.yaml
 
 # Sensors
 - ansible.builtin.import_playbook: sdr/playbook.yaml
