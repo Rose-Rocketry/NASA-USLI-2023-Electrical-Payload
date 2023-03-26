@@ -74,7 +74,7 @@ DEPLOY_LEGS_CHANNEL_B = PWMPort(15)
 DEPLOY_LEGS_POWER = 0.5
 DEPLOY_LEGS_DURATION = 5  # On time of burn wire
 DEPLOY_LEGS_WAIT = 5  # How long to wait after deploying to start orienting
-DEPLOY_DOOR_SERVO = ServoGroup(Servo(9, inverted=True), Servo(5, inverted=True))
+DEPLOY_DOOR_SERVO = ServoGroup(Servo(9), Servo(5))
 DEPLOY_DOOR_POWER = 1
 DEPLOY_DOOR_DURATION = 3
 DEPLOY_DOOR_WAIT = 2
