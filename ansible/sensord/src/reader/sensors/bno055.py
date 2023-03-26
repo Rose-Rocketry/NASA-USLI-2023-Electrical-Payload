@@ -25,7 +25,7 @@ class BNO055Sensor(PollingSensor):
         }
 
     def _get_sensor_poll_rate(self) -> float:
-        return 5
+        return 10
 
     def _run(self) -> None:
         self._interface = BNO055Interface()
